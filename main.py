@@ -34,7 +34,7 @@ def carregar_dados_reais():
         # Verificar se o arquivo CSV existe
         if not os.path.exists('boletos_extraidos.csv'):
             logger.error("❌ Arquivo boletos_extraidos.csv não encontrado!")
-            logger.info("Execute primeiro: python extrai_boletos_pasta.py")
+            logger.info("Execute primeiro a extração de PDFs pela interface gráfica")
             return None
         
         # Carregar dados do CSV

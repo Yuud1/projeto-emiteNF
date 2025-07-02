@@ -30,23 +30,8 @@ class Settings:
         # Configurações de arquivos (com fallback para variáveis de ambiente)
         self.data_directory = os.getenv('DATA_DIRECTORY', self.data_directory if hasattr(self, 'data_directory') else 'data')
         self.logs_directory = os.getenv('LOGS_DIRECTORY', self.logs_directory if hasattr(self, 'logs_directory') else 'logs')
-        self.mappings_file = os.getenv('MAPPINGS_FILE', self.mappings_file if hasattr(self, 'mappings_file') else 'config/field_mappings.json')
         
-        # Configurações de validação
-        self.required_fields = [
-            'nome_cliente',
-            'cpf_cnpj', 
-            'valor'
-        ]
-        
-        # Campos opcionais do WebISS
-        self.optional_fields = [
-            'descricao',
-            'endereco',
-            'telefone',
-            'email',
-            'observacoes'
-        ]
+
         
         # Criar diretórios se não existirem
         self._create_directories()
@@ -60,85 +45,9 @@ class Settings:
                 os.makedirs(directory)
                 logger.info(f"Diretório criado: {directory}")
     
-    def validate(self) -> bool:
-        """
-        Valida se as configurações estão corretas
-        
-        Returns:
-            bool: True se configurações válidas
-        """
-        errors = []
-        
-        # Verifica credenciais do WebISS
-        if not self.username:
-            errors.append("WEBISS_USERNAME não configurado")
-        
-        if not self.password:
-            errors.append("WEBISS_PASSWORD não configurado")
-        
-        if not self.webiss_url or self.webiss_url == 'https://webiss.exemplo.com':
-            errors.append("WEBISS_URL não configurado ou inválido")
-        
-        # Verifica valores numéricos
-        if self.timeout <= 0:
-            errors.append("TIMEOUT deve ser maior que zero")
-        
-        if self.delay_between_actions < 0:
-            errors.append("DELAY_BETWEEN_ACTIONS deve ser maior ou igual a zero")
-        
-        if errors:
-            for error in errors:
-                logger.error(f"Erro de configuração: {error}")
-            return False
-        
-        logger.info("Configurações validadas com sucesso")
-        return True
+
     
-    def get_all_fields(self) -> list:
-        """Retorna todos os campos disponíveis"""
-        return self.required_fields + self.optional_fields
-    
-    def get_webiss_config(self) -> dict:
-        """Retorna configurações específicas do WebISS"""
-        return {
-            'username': self.username,
-            'password': self.password,
-            'url': self.webiss_url,
-            'timeout': self.timeout,
-            'headless': self.headless_mode
-        }
-    
-    def get_automation_config(self) -> dict:
-        """Retorna configurações de automação"""
-        return {
-            'delay_between_actions': self.delay_between_actions,
-            'timeout': self.timeout,
-            'headless_mode': self.headless_mode
-        }
-    
-    def save_to_env_file(self, file_path: str = '.env'):
-        """
-        Salva configurações em arquivo .env
-        
-        Args:
-            file_path: Caminho do arquivo .env
-        """
-        try:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write(f"WEBISS_USERNAME={self.username}\n")
-                f.write(f"WEBISS_PASSWORD={self.password}\n")
-                f.write(f"WEBISS_URL={self.webiss_url}\n")
-                f.write(f"HEADLESS_MODE={str(self.headless_mode).lower()}\n")
-                f.write(f"TIMEOUT={self.timeout}\n")
-                f.write(f"DELAY_BETWEEN_ACTIONS={self.delay_between_actions}\n")
-                f.write(f"DATA_DIRECTORY={self.data_directory}\n")
-                f.write(f"LOGS_DIRECTORY={self.logs_directory}\n")
-                f.write(f"MAPPINGS_FILE={self.mappings_file}\n")
-            
-            logger.info(f"Configurações salvas em: {file_path}")
-            
-        except Exception as e:
-            logger.error(f"Erro ao salvar configurações: {e}")
+
     
     def load_from_env_file(self, file_path: str = '.env'):
         """
@@ -173,8 +82,7 @@ class Settings:
                                 self.data_directory = value
                             elif key == 'LOGS_DIRECTORY':
                                 self.logs_directory = value
-                            elif key == 'MAPPINGS_FILE':
-                                self.mappings_file = value
+
                 
                 logger.info(f"Configurações carregadas de: {file_path}")
             else:

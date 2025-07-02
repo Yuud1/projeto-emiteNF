@@ -608,13 +608,21 @@ else:
                     return False
                 self.is_primeiro_boleto = False
             else:
-                # Para os demais boletos, clicar em Criar e seguir o mesmo fluxo
-                self.log_message("🔄 Voltando para tela de criação de nota...", "INFO")
-                if not self.automation.voltar_para_criar_nfse():
-                    self.log_message("❌ Falha ao voltar para tela de criar NFSe", "ERROR")
+                # Para os demais boletos, clicar apenas em "Criar" no menu lateral
+                self.log_message("🔄 Voltando para tela de criação de nota... (clicando apenas em Criar)", "INFO")
+                try:
+                    from selenium.webdriver.common.by import By
+                    from selenium.webdriver.support.ui import WebDriverWait
+                    from selenium.webdriver.support import expected_conditions as EC
+                    criar_menu = WebDriverWait(self.automation.driver, 10).until(
+                        EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Criar')]"))
+                    )
+                    criar_menu.click()
+                    import time
+                    time.sleep(1.5)
+                except Exception as e:
+                    self.log_message(f"❌ Falha ao clicar em Criar: {e}", "ERROR")
                     return False
-                import time
-                time.sleep(1.5)
 
             # Clicar em Próximo para ir ao Step 2
             if not self.automation.click_proximo():
@@ -669,7 +677,6 @@ else:
 
             self.log_message("✅ Boleto processado com sucesso!", "SUCCESS")
             return True
-            
         except Exception as e:
             self.log_message(f"❌ Erro durante processamento do boleto: {e}", "ERROR")
             return False
