@@ -1,0 +1,14 @@
+# Configurações do WebISS
+WEBISS_USERNAME=seu_usuario_aqui
+WEBISS_PASSWORD=sua_senha_aqui
+WEBISS_URL=https://webiss.exemplo.com
+
+# Configurações de Automação
+HEADLESS_MODE=false
+TIMEOUT=15
+DELAY_BETWEEN_ACTIONS=2.0
+
+# Configurações de Arquivos
+DATA_DIRECTORY=data
+LOGS_DIRECTORY=logs
+MAPPINGS_FILE=config/field_mappings.json 

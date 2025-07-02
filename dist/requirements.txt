@@ -1,0 +1,12 @@
+selenium==4.15.2
+webdriver-manager==4.0.1
+pandas
+openpyxl==3.1.2
+python-dotenv==1.0.0
+requests==2.31.0
+beautifulsoup4==4.12.2
+lxml
+Pillow
+# Dependências para GUI e Build
+tkinter
+pyinstaller 

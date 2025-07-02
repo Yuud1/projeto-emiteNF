@@ -1,0 +1,132 @@
+{
+  "cnae_field_selectors": [
+    {
+      "name": "CNAE Principal",
+      "selectors": [
+        "//label[contains(text(), 'CNAE')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'CNAE')]/parent::div//a[contains(@class, 'select2-choice')]",
+        "//div[contains(text(), 'CNAE')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 1
+    },
+    {
+      "name": "Código CNAE",
+      "selectors": [
+        "//label[contains(text(), 'Código')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Código CNAE')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 2
+    },
+    {
+      "name": "Classificação CNAE",
+      "selectors": [
+        "//label[contains(text(), 'Classificação')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Classificação CNAE')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 3
+    },
+    {
+      "name": "Atividade Econômica",
+      "selectors": [
+        "//label[contains(text(), 'Atividade Econômica')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Atividade')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 4
+    },
+    {
+      "name": "Posição 3 (Fallback)",
+      "selectors": [
+        "//a[contains(@class, 'select2-choice')][3]"
+      ],
+      "priority": 5
+    },
+    {
+      "name": "Posição 4 (Fallback)",
+      "selectors": [
+        "//a[contains(@class, 'select2-choice')][4]"
+      ],
+      "priority": 6
+    }
+  ],
+  "competencia_field_selectors": [
+    {
+      "name": "Competência",
+      "selectors": [
+        "//label[contains(text(), 'Competência')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Mês')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Período')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 1
+    },
+    {
+      "name": "Posição 1 (Fallback)",
+      "selectors": [
+        "//a[contains(@class, 'select2-choice')][1]"
+      ],
+      "priority": 2
+    }
+  ],
+  "atividade_field_selectors": [
+    {
+      "name": "Tipo de Atividade",
+      "selectors": [
+        "//label[contains(text(), 'Tipo de atividade')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Atividade')]/following-sibling::div//a[contains(@class, 'select2-choice')]",
+        "//label[contains(text(), 'Serviço')]/following-sibling::div//a[contains(@class, 'select2-choice')]"
+      ],
+      "priority": 1
+    },
+    {
+      "name": "Posição 2 (Fallback)",
+      "selectors": [
+        "//a[contains(@class, 'select2-choice')][2]"
+      ],
+      "priority": 2
+    }
+  ],
+  "descricao_field_selectors": [
+    {
+      "name": "Descrição",
+      "selectors": [
+        "//label[contains(text(), 'Descrição')]/following-sibling::textarea",
+        "//label[contains(text(), 'Descrição')]/parent::div//textarea",
+        "//textarea[@name='descricao']",
+        "//textarea[@placeholder='Descrição']"
+      ],
+      "priority": 1
+    }
+  ],
+  "cnae_values": {
+    "educacional": [
+      "8512-1/00 - Educação infantil - creche",
+      "8512-1/01 - Educação infantil - pré-escola",
+      "8512-1/02 - Educação infantil - educação infantil integrada",
+      "8513-1/00 - Ensino fundamental",
+      "8514-1/00 - Ensino médio",
+      "8514-2/00 - Ensino médio integrado",
+      "8520-1/00 - Ensino superior",
+      "8520-2/00 - Ensino superior - graduação",
+      "8520-3/00 - Ensino superior - pós-graduação",
+      "8520-4/00 - Ensino superior - extensão"
+    ],
+    "consultoria": [
+      "7020-4/00 - Consultoria em gestão empresarial",
+      "7020-4/01 - Consultoria em gestão empresarial, exceto em recursos humanos",
+      "7020-4/02 - Consultoria em recursos humanos",
+      "7111-1/00 - Serviços de arquitetura",
+      "7112-0/00 - Serviços de engenharia",
+      "7113-8/00 - Testes e análises técnicas",
+      "7120-1/00 - Serviços técnicos relacionados à arquitetura e engenharia"
+    ],
+    "tecnologia": [
+      "6201-5/01 - Desenvolvimento de sistemas de computação sob encomenda",
+      "6201-5/02 - Desenvolvimento e licenciamento de programas de computação customizáveis",
+      "6201-5/03 - Desenvolvimento e licenciamento de programas de computação não-customizáveis",
+      "6201-5/04 - Desenvolvimento e licenciamento de programas de computação não-customizáveis",
+      "6202-3/00 - Desenvolvimento de programas de computador sob encomenda",
+      "6203-1/00 - Desenvolvimento de programas de computador de prateleira",
+      "6204-0/00 - Consultoria em tecnologia da informação",
+      "6209-1/00 - Suporte técnico em tecnologia da informação"
+    ]
+  }
+} 
