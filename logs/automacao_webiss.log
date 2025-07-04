@@ -1,0 +1,3 @@
+2025-07-04 15:57:42,902 - __main__ - INFO - === INICIANDO AUTOMAÇÃO WEBISS (DADOS REAIS) ===
+2025-07-04 15:57:42,902 - __main__ - ERROR - ❌ Arquivo boletos_extraidos.csv não encontrado em: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\boletos_extraidos.csv
+2025-07-04 15:57:42,902 - __main__ - INFO - Execute primeiro a extração de PDFs pela interface gráfica

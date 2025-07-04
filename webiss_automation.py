@@ -30,6 +30,24 @@ class WebISSAutomation:
         self.driver = None
         self.wait = None
         self.is_logged_in = False
+    
+    def get_logs_dir(self):
+        """Retorna o diretório de logs baseado no local do executável"""
+        import sys
+        import os
+        if getattr(sys, 'frozen', False):
+            # Se é um executável PyInstaller
+            base_path = os.path.dirname(sys.executable)
+        else:
+            # Se é executado como script Python
+            base_path = os.getcwd()
+        
+        logs_dir = os.path.join(base_path, 'logs')
+        # Criar pasta logs se não existir
+        if not os.path.exists(logs_dir):
+            os.makedirs(logs_dir)
+        
+        return logs_dir
         
     def setup_driver(self):
         """Configura o driver do Chrome"""
@@ -307,23 +325,137 @@ class WebISSAutomation:
             ]
             find_and_fill_field('nome_cliente', nome_xpaths, data.get('nome_cliente', ''))
 
-            # 3. Preencher CEP
-            cep_xpaths = [
-                "//input[@name='cep']",
-                "//input[@id='cep']",
-                "//input[contains(@placeholder, 'CEP')]",
-                "//input[contains(@placeholder, 'cep')]"
-            ]
+            # 3. Lidar com Inscrição Municipal e CEP
             cep_value = data.get('cep', '')
+            logger.info(f"CEP recebido nos dados: '{cep_value}'")
+            
             if not cep_value and 'endereco' in data:
-                # Tentar extrair CEP do endereço
+                # Tentar extrair CEP do endereço com múltiplas estratégias
                 import re
+                
+                # Estratégia 1: CEP no formato padrão
                 cep_match = re.search(r'(\d{5})-?(\d{3})', data['endereco'])
                 if cep_match:
                     cep_value = f"{cep_match.group(1)}-{cep_match.group(2)}"
-                    logger.info(f"CEP extraído do endereço: {cep_value}")
+                    logger.info(f"✅ CEP extraído do endereço (padrão): {cep_value}")
+                else:
+                    # Estratégia 2: CEP sem hífen
+                    cep_match = re.search(r'(\d{8})', data['endereco'])
+                    if cep_match:
+                        cep = cep_match.group(1)
+                        cep_value = f"{cep[:5]}-{cep[5:]}"
+                        logger.info(f"✅ CEP extraído do endereço (sem hífen): {cep_value}")
+                    else:
+                        # Estratégia 3: Buscar CEP em qualquer lugar
+                        cep_match = re.search(r'(\d{5})[.\-\s]*(\d{3})', data['endereco'])
+                        if cep_match:
+                            cep_value = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                            logger.info(f"✅ CEP extraído do endereço (alternativo): {cep_value}")
+                        else:
+                            logger.warning(f"❌ CEP não encontrado no endereço: {data['endereco']}")
+                            # Tentar extrair da descrição
+                            if 'descricao' in data and data['descricao']:
+                                cep_match = re.search(r'(\d{5})-?(\d{3})', data['descricao'])
+                                if cep_match:
+                                    cep_value = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                                    logger.info(f"✅ CEP extraído da descrição: {cep_value}")
+            else:
+                if cep_value:
+                    logger.info(f"✅ CEP já disponível nos dados: {cep_value}")
+                else:
+                    logger.warning(f"⚠️ CEP não disponível nos dados e endereço não encontrado")
             
-            find_and_fill_field('cep', cep_xpaths, cep_value)
+            # Verificar se o campo Inscrição Municipal virou select ou select2
+            logger.info("🔍 Verificando campo Inscrição Municipal...")
+            inscricao_municipal_select = None
+            inscricao_municipal_select2 = None
+            
+            try:
+                # Primeiro tentar encontrar o select normal (comboInscricao)
+                try:
+                    inscricao_municipal_select = self.driver.find_element(By.ID, "comboInscricao")
+                    if inscricao_municipal_select.is_displayed():
+                        logger.info("✅ Select normal da Inscrição Municipal encontrado (comboInscricao)")
+                except:
+                    logger.info("ℹ️ Select comboInscricao não encontrado")
+                
+                # Se não encontrou select normal, tentar select2
+                if not inscricao_municipal_select:
+                    inscricao_selectors = [
+                        "//div[@id='s2id_inscricao_municipal']",
+                        "//div[contains(@id, 's2id') and contains(@id, 'inscricao')]",
+                        "//div[contains(@id, 's2id') and contains(@id, 'municipal')]",
+                        "//div[contains(@class, 'select2-container') and contains(@class, 'inscricao')]"
+                    ]
+                    
+                    for selector in inscricao_selectors:
+                        try:
+                            inscricao_municipal_select2 = self.driver.find_element(By.XPATH, selector)
+                            if inscricao_municipal_select2.is_displayed():
+                                logger.info(f"✅ Select2 da Inscrição Municipal encontrado: {selector}")
+                                break
+                        except:
+                            continue
+                
+                # Lidar com select normal
+                if inscricao_municipal_select:
+                    logger.info("🔄 Campo Inscrição Municipal é um select normal - tentando selecionar opção correta...")
+                    
+                    if cep_value:
+                        success = self.tentar_selecionar_inscricao_select_por_cep(inscricao_municipal_select, cep_value)
+                        if success:
+                            logger.info("✅ Inscrição Municipal selecionada com sucesso pelo CEP")
+                        else:
+                            logger.warning("⚠️ Não foi possível encontrar inscrição municipal pelo CEP")
+                    else:
+                        logger.warning("⚠️ CEP não disponível para selecionar inscrição municipal")
+                
+                # Lidar com select2
+                elif inscricao_municipal_select2:
+                    logger.info("🔄 Campo Inscrição Municipal é um select2 - tentando selecionar opção correta...")
+                    
+                    if cep_value:
+                        success = self.tentar_selecionar_inscricao_por_cep(inscricao_municipal_select2, cep_value)
+                        if success:
+                            logger.info("✅ Inscrição Municipal selecionada com sucesso pelo CEP")
+                        else:
+                            logger.warning("⚠️ Não foi possível encontrar inscrição municipal pelo CEP")
+                    else:
+                        logger.warning("⚠️ CEP não disponível para selecionar inscrição municipal")
+                
+                # Se não encontrou nenhum select, preencher CEP normalmente
+                else:
+                    logger.info("ℹ️ Campo Inscrição Municipal não é um select - preenchendo CEP normalmente")
+                    # Preencher CEP normalmente
+                    cep_xpaths = [
+                        "//input[@name='cep']",
+                        "//input[@id='cep']",
+                        "//input[contains(@placeholder, 'CEP')]",
+                        "//input[contains(@placeholder, 'cep')]"
+                    ]
+                    
+                    logger.info(f"Tentando preencher CEP: '{cep_value}'")
+                    if cep_value:
+                        success = find_and_fill_field('cep', cep_xpaths, cep_value)
+                        if success:
+                            logger.info(f"✅ CEP preenchido com sucesso: {cep_value}")
+                        else:
+                            logger.error(f"❌ Falha ao preencher CEP: {cep_value}")
+                    else:
+                        logger.warning("⚠️ Nenhum CEP disponível para preencher")
+                        
+            except Exception as e:
+                logger.error(f"❌ Erro ao verificar inscrição municipal: {e}")
+                # Fallback: tentar preencher CEP normalmente
+                cep_xpaths = [
+                    "//input[@name='cep']",
+                    "//input[@id='cep']",
+                    "//input[contains(@placeholder, 'CEP')]",
+                    "//input[contains(@placeholder, 'cep')]"
+                ]
+                
+                if cep_value:
+                    find_and_fill_field('cep', cep_xpaths, cep_value)
 
             # 4. Aguardar preenchimento automático do endereço (Município/UF) - REMOVIDO para otimização
             # logger.info("Aguardando preenchimento automático do município...")
@@ -416,6 +548,7 @@ class WebISSAutomation:
     def click_proximo(self) -> bool:
         """Clica no botão Próximo na etapa atual"""
         try:
+            import time
             logger.info("=== TENTANDO CLICAR EM PRÓXIMO ===")
             
             # Aguardar um pouco antes de procurar o botão (OTIMIZADO)
@@ -571,12 +704,14 @@ class WebISSAutomation:
     def selecionar_mes_competencia(self, mes_num):
         """Seleciona o mês de competência no select2 do mês com múltiplas estratégias e remoção de overlay."""
         try:
+            import time
+            import os
             from selenium.webdriver.support.ui import WebDriverWait
             from selenium.webdriver.common.by import By
             from selenium.webdriver.common.action_chains import ActionChains
-            from datetime import datetime
             
             # Detectar mês atual automaticamente
+            from datetime import datetime
             mes_atual = datetime.now().month
             logger.info(f"[DEBUG] Mês atual detectado: {mes_atual}")
             logger.info(f"[DEBUG] Mês solicitado: {mes_num}")
@@ -636,9 +771,10 @@ class WebISSAutomation:
                 else:
                     # Se chegou aqui, não encontrou o item
                     logger.warning(f"[DEBUG] Não encontrou o li do mês após {max_wait}s")
-                    with open('logs/select2_ul_debug.html', 'w', encoding='utf-8') as f:
+                    debug_file = os.path.join(self.get_logs_dir(), 'select2_ul_debug.html')
+                    with open(debug_file, 'w', encoding='utf-8') as f:
                         f.write(ul.get_attribute('outerHTML'))
-                    logger.info("[DEBUG] HTML do ul salvo em logs/select2_ul_debug.html")
+                    logger.info(f"[DEBUG] HTML do ul salvo em {debug_file}")
                     raise Exception("Item do mês não encontrado na lista")
                 
                 # Aguardar item ficar visível
@@ -674,9 +810,10 @@ class WebISSAutomation:
                 
                 # Salvar HTML para debug
                 try:
-                    with open('logs/select2_ul_debug.html', 'w', encoding='utf-8') as f:
+                    debug_file = os.path.join(self.get_logs_dir(), 'select2_ul_debug.html')
+                    with open(debug_file, 'w', encoding='utf-8') as f:
                         f.write(self.driver.page_source)
-                    logger.info("[DEBUG] HTML da página salvo em logs/select2_ul_debug.html")
+                    logger.info(f"[DEBUG] HTML da página salvo em {debug_file}")
                 except:
                     pass
                 
@@ -828,6 +965,7 @@ class WebISSAutomation:
     def fill_nfse_servicos_sem_scroll(self, data: Dict[str, Any]) -> bool:
         """Preenche a etapa de Serviços usando apenas JavaScript para evitar scroll"""
         try:
+            import time
             logger.info("=== PREENCHENDO STEP 3 - SERVIÇOS (SEM SCROLL) ===")
             logger.info(f"Dados recebidos: {data}")
 
@@ -1033,8 +1171,8 @@ class WebISSAutomation:
                 logger.error("Nenhum formato de valor foi aceito pelo campo.")
                 return False
 
-            # 4. Parar a automação aqui
-            logger.info("Automação parada após preencher valor do serviço no Step 4.")
+            # 4. Valor do serviço preenchido com sucesso
+            logger.info("✅ Valor do serviço preenchido com sucesso no Step 4.")
             return True
         except Exception as e:
             logger.error(f"Erro ao preencher etapa Valores: {e}")
@@ -1043,6 +1181,7 @@ class WebISSAutomation:
     def salvar_rascunho(self) -> bool:
         """Clica no botão Salvar rascunho"""
         try:
+            import time
             salvar_btn_xpaths = [
                 "//a[contains(@class, 'salvar-rascunho')]",
                 "//button[contains(., 'Salvar rascunho')]",
@@ -1071,11 +1210,115 @@ class WebISSAutomation:
             self.take_screenshot("salvar_rascunho_error.png")
             return False
     
+    def emitir_nota_fiscal(self) -> bool:
+        """Clica no botão Emitir nota fiscal"""
+        try:
+            import time
+            # Aguardar um pouco para a página carregar após salvar rascunho
+            time.sleep(1)
+            
+            # Múltiplos seletores para o botão Emitir (ordenados por precisão)
+            emitir_btn_xpaths = [
+                "//button[@id='botao-emitir-nota-fiscal']",
+                "//button[@data-loading-message='Emitindo Nota Fiscal']",
+                "//button[contains(@class, 'btn-primary') and contains(@class, 'glyphicons') and contains(@class, 'circle_ok')]",
+                "//button[contains(@class, 'btn-primary') and contains(text(), 'Emitir')]",
+                "//button[contains(@class, 'glyphicons') and contains(@class, 'circle_ok')]",
+                "//button[contains(text(), 'Emitir')]",
+                "//input[@value='Emitir']",
+                "//form//button[@type='submit' and contains(@class, 'btn-primary')]"
+            ]
+            
+            emitir_btn = None
+            
+            # Primeiro tentar com seletor CSS mais específico
+            try:
+                emitir_btn = self.wait.until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, "button#botao-emitir-nota-fiscal"))
+                )
+                logger.info("Botão Emitir encontrado via CSS selector")
+            except TimeoutException:
+                # Se não encontrar, tentar com XPath
+                for xpath in emitir_btn_xpaths:
+                    try:
+                        emitir_btn = self.wait.until(
+                            EC.element_to_be_clickable((By.XPATH, xpath))
+                        )
+                        logger.info(f"Botão Emitir encontrado: {xpath}")
+                        break
+                    except TimeoutException:
+                        continue
+            
+            if not emitir_btn:
+                logger.error("Botão Emitir não encontrado em nenhum seletor")
+                self.take_screenshot("emitir_not_found.png")
+                return False
+            
+            # Verificar se o botão está visível e habilitado
+            if not emitir_btn.is_displayed():
+                logger.warning("Botão Emitir não está visível")
+            if not emitir_btn.is_enabled():
+                logger.warning("Botão Emitir não está habilitado")
+            
+            # Verificar se o botão não está com loading
+            if "page-loading" in emitir_btn.get_attribute("class"):
+                logger.info("Aguardando botão sair do estado de loading...")
+                time.sleep(2)
+            
+            # Clicar no botão via JavaScript para evitar problemas de scroll
+            self.driver.execute_script("arguments[0].click();", emitir_btn)
+            logger.info("Botão Emitir clicado via JavaScript")
+            
+            # Aguardar processamento da emissão
+            time.sleep(3)
+            
+            # Verificar se a emissão foi bem-sucedida
+            # Procurar por mensagens de sucesso ou redirecionamento
+            success_indicators = [
+                "nota fiscal emitida",
+                "emissão concluída",
+                "nota fiscal gerada",
+                "sucesso",
+                "emitida com sucesso"
+            ]
+            
+            page_text = self.driver.page_source.lower()
+            if any(indicator in page_text for indicator in success_indicators):
+                logger.info("✅ Nota fiscal emitida com sucesso!")
+                return True
+            else:
+                # Verificar se houve erro
+                error_indicators = [
+                    "erro",
+                    "falha",
+                    "não foi possível",
+                    "tente novamente"
+                ]
+                
+                if any(indicator in page_text for indicator in error_indicators):
+                    logger.error("❌ Erro na emissão da nota fiscal")
+                    self.take_screenshot("erro_emissao.png")
+                    return False
+                else:
+                    # Se não encontrou indicadores claros, assumir sucesso
+                    logger.info("✅ Emissão da nota fiscal concluída")
+                    
+                    # Aguardar um pouco para a página carregar completamente
+                    time.sleep(2)
+                    
+                    return True
+                    
+        except Exception as e:
+            logger.error(f"Erro ao emitir nota fiscal: {e}")
+            self.take_screenshot("emitir_error.png")
+            return False
+    
     def navigate_to_new_nfse(self) -> bool:
         """
         Navega para formulário de nova NFSe (WebISS Palmas)
         """
         try:
+            import time
             # 1. Clicar em ISSQN
             try:
                 issqn_menu = self.wait.until(
@@ -1161,12 +1404,15 @@ class WebISSAutomation:
         Args:
             filename: Nome do arquivo (opcional)
         """
+        import os
+        import time
         if not filename:
             filename = f"screenshot_{int(time.time())}.png"
         
         try:
-            self.driver.save_screenshot(f"logs/{filename}")
-            logger.info(f"Screenshot salvo: {filename}")
+            screenshot_path = os.path.join(self.get_logs_dir(), filename)
+            self.driver.save_screenshot(screenshot_path)
+            logger.info(f"Screenshot salvo: {screenshot_path}")
         except Exception as e:
             logger.error(f"Erro ao salvar screenshot: {e}") 
 
@@ -1177,6 +1423,7 @@ class WebISSAutomation:
     def selecionar_tipo_atividade(self, arrow_down_count=1):
         """Seleciona o tipo de atividade no município usando JavaScript direto."""
         try:
+            import time
             logger.info(f"[DEBUG] Tentando selecionar tipo de atividade com {arrow_down_count} descidas")
             
             # Estratégia 1: Usar JavaScript para setar valor diretamente
@@ -1241,6 +1488,7 @@ class WebISSAutomation:
     def selecionar_cnae(self, arrow_down_count=1):
         """Seleciona o CNAE usando JavaScript direto."""
         try:
+            import time
             logger.info(f"[DEBUG] Tentando selecionar CNAE com {arrow_down_count} descidas")
             
             # Estratégia 1: Usar JavaScript para setar valor diretamente
@@ -1305,6 +1553,7 @@ class WebISSAutomation:
     def lidar_com_modal_competencia(self):
         """Lida com o modal de confirmação da competência que pode aparecer."""
         try:
+            import time
             # Aguardar um pouco para o modal aparecer
             time.sleep(1)
             
@@ -1335,6 +1584,361 @@ class WebISSAutomation:
             
         except Exception as e:
             logger.warning(f"⚠️ Erro ao lidar com modal: {e}")
+            return False
+
+    def tentar_selecionar_inscricao_select_por_cep(self, select_element, cep_desejado):
+        """
+        Tenta selecionar a inscrição municipal correta baseada no CEP desejado (select normal)
+        
+        Args:
+            select_element: Elemento select da inscrição municipal
+            cep_desejado: CEP que deve ser encontrado após seleção
+            
+        Returns:
+            bool: True se encontrou e selecionou a inscrição correta
+        """
+        try:
+            import time
+            logger.info(f"🎯 Tentando encontrar inscrição municipal para CEP: {cep_desejado}")
+            
+            # Aguardar um pouco para o select carregar as opções
+            time.sleep(2)
+            
+            # Verificar se o select está habilitado
+            if select_element.get_attribute('disabled'):
+                logger.warning("⚠️ Select está desabilitado, tentando habilitar...")
+                self.driver.execute_script("arguments[0].removeAttribute('disabled');", select_element)
+                time.sleep(1)
+            
+            # Obter todas as opções do select
+            opcoes = select_element.find_elements(By.TAG_NAME, "option")
+            logger.info(f"📋 Encontradas {len(opcoes)} opções de inscrição municipal")
+            
+            # Log das opções para debug
+            for i, opcao in enumerate(opcoes):
+                valor = opcao.get_attribute('value')
+                texto = opcao.text
+                logger.info(f"  Opção {i}: valor='{valor}', texto='{texto}'")
+            
+            if len(opcoes) <= 1:  # Apenas "Selecione uma inscrição..."
+                logger.warning("⚠️ Nenhuma opção válida encontrada no select")
+                
+                # Tentar aguardar mais um pouco e verificar novamente
+                logger.info("🔄 Aguardando carregamento das opções...")
+                time.sleep(3)
+                opcoes = select_element.find_elements(By.TAG_NAME, "option")
+                logger.info(f"📋 Após aguardar: {len(opcoes)} opções encontradas")
+                
+                if len(opcoes) <= 1:
+                    logger.warning("⚠️ Ainda não há opções válidas, tentando forçar carregamento...")
+                    
+                    # Tentar forçar carregamento clicando no select
+                    try:
+                        self.driver.execute_script("arguments[0].click();", select_element)
+                        time.sleep(2)
+                        opcoes = select_element.find_elements(By.TAG_NAME, "option")
+                        logger.info(f"📋 Após clicar: {len(opcoes)} opções encontradas")
+                    except Exception as e:
+                        logger.warning(f"⚠️ Erro ao clicar no select: {e}")
+                
+                if len(opcoes) <= 1:
+                    logger.error("❌ Não foi possível carregar opções do select")
+                    return False
+            
+            # Tentar cada opção até encontrar o CEP correto
+            for i, opcao in enumerate(opcoes):
+                try:
+                    # Pular a primeira opção (geralmente "Selecione uma inscrição...")
+                    if i == 0:
+                        continue
+                    
+                    valor_opcao = opcao.get_attribute('value')
+                    texto_opcao = opcao.text
+                    
+                    # Pular opções vazias ou inválidas
+                    if not valor_opcao or valor_opcao == '-1' or valor_opcao == '':
+                        logger.info(f"⏭️ Pulando opção {i}: valor inválido '{valor_opcao}'")
+                        continue
+                    
+                    logger.info(f"🔄 Testando opção {i}/{len(opcoes)}: {texto_opcao} (valor: {valor_opcao})")
+                    
+                    # Selecionar a opção
+                    self.driver.execute_script("arguments[0].value = arguments[1];", select_element, valor_opcao)
+                    self.driver.execute_script("arguments[0].dispatchEvent(new Event('change'));", select_element)
+                    self.driver.execute_script("arguments[0].dispatchEvent(new Event('input'));", select_element)
+                    
+                    time.sleep(3)  # Aguardar carregamento
+                    
+                    # Verificar se o CEP foi preenchido automaticamente
+                    cep_campos = [
+                        "//input[@name='cep']",
+                        "//input[@id='cep']",
+                        "//input[contains(@placeholder, 'CEP')]",
+                        "//input[contains(@placeholder, 'cep')]"
+                    ]
+                    
+                    cep_preenchido = None
+                    for cep_xpath in cep_campos:
+                        try:
+                            cep_field = self.driver.find_element(By.XPATH, cep_xpath)
+                            if cep_field.is_displayed() and cep_field.get_attribute('value'):
+                                cep_preenchido = cep_field.get_attribute('value')
+                                break
+                        except:
+                            continue
+                    
+                    if cep_preenchido:
+                        logger.info(f"📍 CEP preenchido automaticamente: {cep_preenchido}")
+                        
+                        # Comparar com o CEP desejado
+                        if cep_preenchido == cep_desejado:
+                            logger.info(f"✅ CEP correto encontrado! Opção {i} selecionada: {texto_opcao}")
+                            return True
+                        else:
+                            logger.info(f"❌ CEP incorreto ({cep_preenchido} != {cep_desejado}) - tentando próxima opção")
+                    else:
+                        logger.warning(f"⚠️ Nenhum CEP foi preenchido automaticamente para opção {i}: {texto_opcao}")
+                        
+                except Exception as e:
+                    logger.warning(f"⚠️ Erro ao testar opção {i}: {e}")
+                    continue
+            
+            logger.warning(f"❌ Nenhuma opção encontrou o CEP correto: {cep_desejado}")
+            return False
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao tentar selecionar inscrição por CEP: {e}")
+            return False
+
+    def tentar_selecionar_inscricao_por_cep(self, select2_element, cep_desejado):
+        """
+        Tenta selecionar a inscrição municipal correta baseada no CEP desejado (select2)
+        
+        Args:
+            select2_element: Elemento select2 da inscrição municipal
+            cep_desejado: CEP que deve ser encontrado após seleção
+            
+        Returns:
+            bool: True se encontrou e selecionou a inscrição correta
+        """
+        try:
+            import time
+            logger.info(f"🎯 Tentando encontrar inscrição municipal para CEP: {cep_desejado}")
+            
+            # Clicar no select2 para abrir as opções
+            select2_choice = select2_element.find_element(By.CLASS_NAME, "select2-choice")
+            self.driver.execute_script("arguments[0].click();", select2_choice)
+            time.sleep(1)
+            
+            # Aguardar lista de opções aparecer
+            try:
+                ul = self.wait.until(
+                    lambda d: d.find_element(By.XPATH, "//ul[contains(@class, 'select2-results') and not(contains(@style, 'display: none'))]")
+                )
+                logger.info("✅ Lista de opções do select2 aberta")
+            except TimeoutException:
+                logger.error("❌ Lista de opções não apareceu")
+                return False
+            
+            # Obter todas as opções
+            opcoes = ul.find_elements(By.XPATH, ".//li[@class='select2-result-selectable']")
+            logger.info(f"📋 Encontradas {len(opcoes)} opções de inscrição municipal")
+            
+            if not opcoes:
+                logger.warning("⚠️ Nenhuma opção encontrada no select2")
+                return False
+            
+            # Tentar cada opção até encontrar o CEP correto
+            for i, opcao in enumerate(opcoes):
+                try:
+                    logger.info(f"🔄 Testando opção {i+1}/{len(opcoes)}")
+                    
+                    # Clicar na opção
+                    self.driver.execute_script("arguments[0].click();", opcao)
+                    time.sleep(2)  # Aguardar carregamento
+                    
+                    # Verificar se o CEP foi preenchido automaticamente
+                    cep_campos = [
+                        "//input[@name='cep']",
+                        "//input[@id='cep']",
+                        "//input[contains(@placeholder, 'CEP')]",
+                        "//input[contains(@placeholder, 'cep')]"
+                    ]
+                    
+                    cep_preenchido = None
+                    for cep_xpath in cep_campos:
+                        try:
+                            cep_field = self.driver.find_element(By.XPATH, cep_xpath)
+                            if cep_field.is_displayed() and cep_field.get_attribute('value'):
+                                cep_preenchido = cep_field.get_attribute('value')
+                                break
+                        except:
+                            continue
+                    
+                    if cep_preenchido:
+                        logger.info(f"📍 CEP preenchido automaticamente: {cep_preenchido}")
+                        
+                        # Comparar com o CEP desejado
+                        if cep_preenchido == cep_desejado:
+                            logger.info(f"✅ CEP correto encontrado! Opção {i+1} selecionada")
+                            return True
+                        else:
+                            logger.info(f"❌ CEP incorreto ({cep_preenchido} != {cep_desejado}) - tentando próxima opção")
+                            
+                            # Abrir select2 novamente para próxima opção
+                            if i < len(opcoes) - 1:  # Se não for a última opção
+                                self.driver.execute_script("arguments[0].click();", select2_choice)
+                                time.sleep(1)
+                                
+                                # Aguardar lista aparecer novamente
+                                try:
+                                    ul = self.wait.until(
+                                        lambda d: d.find_element(By.XPATH, "//ul[contains(@class, 'select2-results') and not(contains(@style, 'display: none'))]")
+                                    )
+                                except TimeoutException:
+                                    logger.error("❌ Não foi possível reabrir lista de opções")
+                                    return False
+                                
+                                # Obter opções novamente (pode ter mudado)
+                                opcoes = ul.find_elements(By.XPATH, ".//li[@class='select2-result-selectable']")
+                                if i + 1 < len(opcoes):
+                                    opcao = opcoes[i + 1]
+                                else:
+                                    break
+                    else:
+                        logger.warning(f"⚠️ Nenhum CEP foi preenchido automaticamente para opção {i+1}")
+                        
+                        # Tentar próxima opção mesmo assim
+                        if i < len(opcoes) - 1:
+                            self.driver.execute_script("arguments[0].click();", select2_choice)
+                            time.sleep(1)
+                            
+                            try:
+                                ul = self.wait.until(
+                                    lambda d: d.find_element(By.XPATH, "//ul[contains(@class, 'select2-results') and not(contains(@style, 'display: none'))]")
+                                )
+                                opcoes = ul.find_elements(By.XPATH, ".//li[@class='select2-result-selectable']")
+                                if i + 1 < len(opcoes):
+                                    opcao = opcoes[i + 1]
+                                else:
+                                    break
+                            except TimeoutException:
+                                break
+                        
+                except Exception as e:
+                    logger.warning(f"⚠️ Erro ao testar opção {i+1}: {e}")
+                    continue
+            
+            logger.warning(f"❌ Nenhuma opção encontrou o CEP correto: {cep_desejado}")
+            return False
+            
+        except Exception as e:
+            logger.error(f"❌ Erro ao tentar selecionar inscrição por CEP: {e}")
+            return False
+
+    def navegar_para_proxima_nota(self) -> bool:
+        """Navega para criar a próxima nota após emitir a atual"""
+        try:
+            import time
+            logger.info("🔄 Navegando para próxima nota...")
+            
+            # Aguardar um pouco para a página carregar após emissão
+            time.sleep(2)
+            
+            # Tentar diferentes estratégias para voltar ao menu de criação
+            
+            # Estratégia 1: Clicar em "Criar" no menu lateral
+            try:
+                criar_menu = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Criar')]"))
+                )
+                criar_menu.click()
+                time.sleep(1.5)
+                logger.info("✅ Menu Criar clicado")
+                
+                # Clicar no botão Próximo para avançar para o passo Tomador
+                try:
+                    proximo_btn_xpaths = [
+                        "//a[@id='btnProximo']",  # seletor direto por id
+                        "//button[contains(., 'Próximo')]",
+                        "//a[contains(., 'Próximo')]",
+                        "//*[contains(@class, 'btn') and contains(., 'Próximo')]"
+                    ]
+                    proximo_btn = None
+                    for xpath in proximo_btn_xpaths:
+                        try:
+                            proximo_btn = self.wait.until(
+                                EC.element_to_be_clickable((By.XPATH, xpath))
+                            )
+                            logger.info(f"Botão Próximo encontrado: {xpath}")
+                            break
+                        except TimeoutException:
+                            continue
+                    if not proximo_btn:
+                        raise TimeoutException("Botão Próximo não encontrado em nenhum seletor")
+                    proximo_btn.click()
+                    time.sleep(1)
+                    logger.info("✅ Botão Próximo clicado - avançando para Tomador")
+                    return True
+                except TimeoutException:
+                    logger.error("Botão Próximo não encontrado")
+                    self.take_screenshot("proximo_btn_not_found.png")
+                    return False
+            except TimeoutException:
+                logger.warning("Menu Criar não encontrado, tentando estratégia 2")
+            
+            # Estratégia 2: Voltar ao menu principal e navegar novamente
+            try:
+                # Tentar voltar ao menu ISSQN
+                issqn_menu = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'ISSQN')]"))
+                )
+                issqn_menu.click()
+                time.sleep(1)
+                
+                # Clicar em NFS-e
+                nfse_menu = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'NFS-e')]"))
+                )
+                nfse_menu.click()
+                time.sleep(1)
+                
+                # Clicar em Criar
+                criar_menu = self.wait.until(
+                    EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Criar')]"))
+                )
+                criar_menu.click()
+                time.sleep(1.5)
+                logger.info("✅ Navegação para próxima nota via menu completo")
+                return True
+            except TimeoutException:
+                logger.warning("Navegação via menu completo falhou, tentando estratégia 3")
+            
+            # Estratégia 3: Usar JavaScript para navegar
+            try:
+                self.driver.execute_script("""
+                    // Tentar encontrar e clicar no menu Criar via JavaScript
+                    var criarMenus = document.querySelectorAll('span');
+                    for (var i = 0; i < criarMenus.length; i++) {
+                        if (criarMenus[i].textContent && criarMenus[i].textContent.includes('Criar')) {
+                            criarMenus[i].click();
+                            break;
+                        }
+                    }
+                """)
+                time.sleep(1.5)
+                logger.info("✅ Navegação para próxima nota via JavaScript")
+                return True
+            except Exception as e:
+                logger.warning(f"Navegação via JavaScript falhou: {e}")
+            
+            logger.error("❌ Falha em todas as estratégias de navegação")
+            self.take_screenshot("navegacao_proxima_nota_falhou.png")
+            return False
+            
+        except Exception as e:
+            logger.error(f"Erro ao navegar para próxima nota: {e}")
+            self.take_screenshot("erro_navegacao_proxima_nota.png")
             return False
 
  

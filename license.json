@@ -1,0 +1,10 @@
+{
+  "dados": {
+    "cliente": "ColegioObjetivo",
+    "data_criacao": "2025-07-03T11:29:39.603164",
+    "data_expiracao": "2025-09-01T11:29:39.603164",
+    "versao": "1",
+    "dias_licenca": 60
+  },
+  "hash": "b326b21c53ccc43461f9dc5fc24054bc87c564a9312b24d4eb65b14d538b308e"
+}

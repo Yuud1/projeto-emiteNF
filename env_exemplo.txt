@@ -1,0 +1,30 @@
+# ========================================
+# CONFIGURAÇÕES DO EMITE NOTA
+# ========================================
+# 
+# INSTRUÇÕES:
+# 1. Renomeie este arquivo para ".env"
+# 2. Configure suas credenciais do WebISS
+# 3. Salve o arquivo
+# 4. Execute o aplicativo
+#
+# ========================================
+
+# Credenciais do WebISS (OBRIGATÓRIO)
+WEBISS_USERNAME=seu_usuario_aqui
+WEBISS_PASSWORD=sua_senha_aqui
+
+# Configurações de automação (OPCIONAL)
+HEADLESS_MODE=false
+TIMEOUT=10
+
+# Configurações de arquivos (OPCIONAL)
+DATA_DIRECTORY=data
+LOGS_DIRECTORY=logs
+MAPPINGS_FILE=config/field_mappings.json
+
+# ========================================
+# EXEMPLO DE CONFIGURAÇÃO:
+# WEBISS_USERNAME=07912296964
+# WEBISS_PASSWORD=minha_senha_segura
+# ======================================== 

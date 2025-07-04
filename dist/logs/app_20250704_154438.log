@@ -1,0 +1,58 @@
+2025-07-04 15:44:38,656 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 15:44:38,741 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 15:46:07,862 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 15:46:07,862 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 15:46:08,738 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 15:46:09,189 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 15:46:09,677 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 15:46:09,678 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 15:46:11,196 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 15:46:11,196 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 15:46:15,106 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 15:46:15,109 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 15:46:15,118 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 15:46:15,131 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 15:46:15,163 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 15:46:15,171 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 15:46:15,178 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 15:46:16,452 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 15:46:16,957 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 15:46:16,962 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 15:46:16,982 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 15:46:25,863 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 15:46:26,917 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 15:46:29,920 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 15:46:29,941 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 15:46:30,986 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 15:46:31,013 - webiss_automation - INFO - === PREENCHENDO FORMULÁRIO TOMADOR ===
+2025-07-04 15:46:31,013 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '71075224187', 'nome_cliente': 'THIAGO CARMO OLIVEIRA', 'endereco': '402 SUL, RUA NS B, CONJUNTO 02 LT 07/08, , PALMAS/ - 77021624', 'valor': 1049.1, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701490 - ANNA LUIZA KZAN CARMO OLIVEIRA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77021-624'}
+2025-07-04 15:46:31,218 - webiss_automation - INFO - ✅ Campo cpf_cnpj preenchido: 71075224187 (usando: //input[@placeholder='Número do documento do tomador'])
+2025-07-04 15:46:31,426 - webiss_automation - INFO - ✅ Campo nome_cliente preenchido: THIAGO CARMO OLIVEIRA (usando: //input[@placeholder='Razão social do tomador'])
+2025-07-04 15:46:31,426 - webiss_automation - INFO - CEP recebido nos dados: '77021-624'
+2025-07-04 15:46:31,426 - webiss_automation - INFO - ✅ CEP já disponível nos dados: 77021-624
+2025-07-04 15:46:31,427 - webiss_automation - INFO - 🔍 Verificando campo Inscrição Municipal...
+2025-07-04 15:46:31,445 - webiss_automation - INFO - 🔄 Campo Inscrição Municipal é um select normal - tentando selecionar opção correta...
+2025-07-04 15:46:31,445 - webiss_automation - INFO - 🎯 Tentando encontrar inscrição municipal para CEP: 77021-624
+2025-07-04 15:46:33,459 - webiss_automation - WARNING - ⚠️ Select está desabilitado, tentando habilitar...
+2025-07-04 15:46:34,476 - webiss_automation - INFO - 📋 Encontradas 1 opções de inscrição municipal
+2025-07-04 15:46:34,490 - webiss_automation - INFO -   Opção 0: valor='-1', texto=''
+2025-07-04 15:46:34,490 - webiss_automation - WARNING - ⚠️ Nenhuma opção válida encontrada no select
+2025-07-04 15:46:34,490 - webiss_automation - INFO - 🔄 Aguardando carregamento das opções...
+2025-07-04 15:46:37,499 - webiss_automation - INFO - 📋 Após aguardar: 1 opções encontradas
+2025-07-04 15:46:37,499 - webiss_automation - WARNING - ⚠️ Ainda não há opções válidas, tentando forçar carregamento...
+2025-07-04 15:46:39,517 - webiss_automation - INFO - 📋 Após clicar: 1 opções encontradas
+2025-07-04 15:46:39,517 - webiss_automation - ERROR - ❌ Não foi possível carregar opções do select
+2025-07-04 15:46:39,517 - webiss_automation - WARNING - ⚠️ Não foi possível encontrar inscrição municipal pelo CEP
+2025-07-04 15:46:39,517 - webiss_automation - INFO - ℹ️ Pulando aguardo do município para otimização
+2025-07-04 15:46:39,518 - webiss_automation - INFO - ✅ Formulário do tomador preenchido com sucesso!
+2025-07-04 15:46:39,522 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 15:46:39,556 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'Foi forçado o cancelamento de uma conexão existente pelo host remoto', None, 10054, None)': /session/b96c4287f2c06ee2c8bda70d45294d21
+2025-07-04 15:46:40,022 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 15:46:43,582 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CA27208690>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/b96c4287f2c06ee2c8bda70d45294d21
+2025-07-04 15:46:44,058 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CA27208410>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/b96c4287f2c06ee2c8bda70d45294d21/element
+2025-07-04 15:46:47,633 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CA2D6D6060>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/b96c4287f2c06ee2c8bda70d45294d21
+2025-07-04 15:46:48,108 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CA2D6D5E00>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/b96c4287f2c06ee2c8bda70d45294d21/element
+2025-07-04 15:46:52,181 - urllib3.connectionpool - WARNING - Connection pool is full, discarding connection: localhost. Connection pool size: 1
+2025-07-04 15:46:52,181 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CA2D71A8B0>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/b96c4287f2c06ee2c8bda70d45294d21/element
+2025-07-04 15:46:55,773 - webiss_automation - INFO - Driver do navegador fechado
+2025-07-04 15:46:55,778 - __main__ - INFO - Aplicação finalizada

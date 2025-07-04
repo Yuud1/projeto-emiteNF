@@ -39,6 +39,16 @@ class ModernMainWindow:
         
         # Configurar interface
         self.setup_ui()
+    
+    def get_app_base_path(self):
+        """Retorna o diretório base da aplicação (executável ou script)"""
+        import sys
+        if getattr(sys, 'frozen', False):
+            # Se é um executável PyInstaller
+            return os.path.dirname(sys.executable)
+        else:
+            # Se é executado como script Python
+            return os.getcwd()
         
     def setup_ui(self):
         """Configura a interface do usuário moderna"""
@@ -128,7 +138,9 @@ class ModernMainWindow:
         folder_select_frame = tk.Frame(pdf_folder_frame, bg='#34495e')
         folder_select_frame.pack(fill=tk.X, pady=(5, 0))
         
-        self.folder_var = tk.StringVar(value='boletos')
+        # Usar caminho absoluto para a pasta boletos baseado no diretório do executável
+        boletos_path = os.path.join(self.get_app_base_path(), 'boletos')
+        self.folder_var = tk.StringVar(value=boletos_path)
         self.folder_entry = tk.Entry(folder_select_frame, 
                                    textvariable=self.folder_var,
                                    font=('Segoe UI', 10),
@@ -191,6 +203,27 @@ class ModernMainWindow:
         
 
         
+        # Informações da Licença
+        license_frame = tk.LabelFrame(parent, text="Licença", 
+                                    font=('Segoe UI', 12, 'bold'),
+                                    fg='#ecf0f1', bg='#34495e',
+                                    relief=tk.FLAT, bd=1)
+        license_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Status da licença
+        self.license_status_label = tk.Label(license_frame,
+                                            text="🔑 Verificando licença...",
+                                            font=('Segoe UI', 10),
+                                            fg='#f39c12', bg='#34495e')
+        self.license_status_label.pack(anchor=tk.W, padx=10, pady=5)
+        
+        # Informações da licença
+        self.license_info_label = tk.Label(license_frame,
+                                          text="",
+                                          font=('Segoe UI', 9),
+                                          fg='#bdc3c7', bg='#34495e')
+        self.license_info_label.pack(anchor=tk.W, padx=10, pady=2)
+        
         # Configurações Rápidas
         config_frame = tk.LabelFrame(parent, text="Configurações", 
                                    font=('Segoe UI', 12, 'bold'),
@@ -229,22 +262,32 @@ class ModernMainWindow:
         data_frame = tk.Frame(notebook, bg='#2c3e50')
         notebook.add(data_frame, text="Dados Extraídos")
         
-        # Treeview para dados
-        columns = ('arquivo', 'cliente', 'valor', 'vencimento', 'turma')
+        # Treeview para dados com checkbox
+        columns = ('selecionado', 'arquivo', 'pagina', 'cliente', 'valor', 'vencimento', 'turma')
         self.data_tree = ttk.Treeview(data_frame, columns=columns, show='headings', height=15)
         
         # Configurar colunas
+        self.data_tree.heading('selecionado', text='✓')
         self.data_tree.heading('arquivo', text='Arquivo')
+        self.data_tree.heading('pagina', text='Página')
         self.data_tree.heading('cliente', text='Cliente')
         self.data_tree.heading('valor', text='Valor')
         self.data_tree.heading('vencimento', text='Vencimento')
         self.data_tree.heading('turma', text='Turma')
         
-        self.data_tree.column('arquivo', width=200)
+        self.data_tree.column('selecionado', width=30, anchor='center')
+        self.data_tree.column('arquivo', width=150)
+        self.data_tree.column('pagina', width=60, anchor='center')
         self.data_tree.column('cliente', width=200)
         self.data_tree.column('valor', width=100)
         self.data_tree.column('vencimento', width=100)
         self.data_tree.column('turma', width=80)
+        
+        # Configurar evento de clique para alternar checkbox
+        self.data_tree.bind('<Button-1>', self.on_tree_click)
+        
+        # Dicionário para armazenar estado dos checkboxes
+        self.checkbox_states = {}
         
         # Scrollbar
         scrollbar = ttk.Scrollbar(data_frame, orient=tk.VERTICAL, command=self.data_tree.yview)
@@ -252,6 +295,32 @@ class ModernMainWindow:
         
         self.data_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(10, 0), pady=10)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y, pady=10)
+        
+        # Frame para botões de seleção
+        selection_frame = tk.Frame(data_frame, bg='#2c3e50')
+        selection_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+        
+        # Botões de seleção
+        tk.Button(selection_frame,
+                 text="✓ Selecionar Todos",
+                 font=('Segoe UI', 9),
+                 bg='#27ae60', fg='white',
+                 relief=tk.FLAT, padx=10, pady=5,
+                 command=self.select_all).pack(side=tk.LEFT, padx=(0, 5))
+        
+        tk.Button(selection_frame,
+                 text="✗ Desmarcar Todos",
+                 font=('Segoe UI', 9),
+                 bg='#e74c3c', fg='white',
+                 relief=tk.FLAT, padx=10, pady=5,
+                 command=self.deselect_all).pack(side=tk.LEFT, padx=(0, 5))
+        
+        tk.Button(selection_frame,
+                 text="🔄 Inverter Seleção",
+                 font=('Segoe UI', 9),
+                 bg='#f39c12', fg='white',
+                 relief=tk.FLAT, padx=10, pady=5,
+                 command=self.invert_selection).pack(side=tk.LEFT)
         
     def log_message(self, message, level="INFO"):
         """Adiciona mensagem ao log"""
@@ -276,9 +345,15 @@ class ModernMainWindow:
         
     def browse_folder(self):
         """Abre diálogo para selecionar pasta com PDFs"""
+        # Usar o diretório atual da pasta boletos como inicial
+        initial_dir = self.folder_var.get()
+        if not os.path.exists(initial_dir):
+            # Se a pasta boletos não existe, usar o diretório do executável
+            initial_dir = self.get_app_base_path()
+        
         folder_path = filedialog.askdirectory(
             title="Selecionar pasta com PDFs dos boletos",
-            initialdir=os.getcwd()
+            initialdir=initial_dir
         )
         
         if folder_path:
@@ -298,164 +373,211 @@ class ModernMainWindow:
                     self.log_message(f"Pasta '{folder_path}' criada. Adicione os PDFs e execute novamente.", "WARNING")
                     return
                 
-                # Executar script de extração com a pasta personalizada
-                import subprocess
-                import sys
+                # Importar dependências necessárias
+                import pdfplumber
+                import re
                 
-                # Criar um script temporário que usa a pasta selecionada
-                temp_script = textwrap.dedent(f"""
-import pdfplumber
-import re
-import pandas as pd
-import os
+                def extrair_dados_boleto_pagina(pdf_path, pagina_num, texto_pagina):
+                    """Extrai dados de uma página específica de um boleto PDF"""
+                    # Nome do cliente (Pagador) - removendo CPF/CNPJ que vem depois
+                    nome = re.search(r'Pagador:\s*(.+?)(?:\s+CPF\s*/\s*CNPJ|$)', texto_pagina)
 
-def extrair_dados_boleto(pdf_path):
-    with pdfplumber.open(pdf_path) as pdf:
-        texto = ""
-        for page in pdf.pages:
-            texto += page.extract_text() + "\\n"
+                    # CPF/CNPJ - padrão específico da instituição
+                    cpf_cnpj = ''
+                    cpf_match = re.search(r'([\d]{3}\.[\d]{3}\.[\d]{3}-[\d]{2})', texto_pagina)
+                    if cpf_match:
+                        cpf_cnpj = cpf_match.group(1)
 
-    # Nome do cliente (Pagador) - removendo CPF/CNPJ que vem depois
-    nome = re.search(r'Pagador:\\s*(.+?)(?:\\s+CPF\\s*/\\s*CNPJ|$)', texto)
-
-    # CPF/CNPJ - padrão específico da instituição (no final da linha do endereço)
-    cpf_cnpj = ''
-    cpf_match = re.search(r'([\\d]{{3}}\\.[\\d]{{3}}\\.[\\d]{{3}}-[\\d]{{2}})', texto)
-    if cpf_match:
-        cpf_cnpj = cpf_match.group(1)
-
-    # Endereço - extração separada
-    endereco = ''
-    endereco_match = re.search(r'CPF ?/ ?CNPJ[:\\s]*[\\d.\\-/]+\\s+(.+?PALMAS.*?)\\s*-?\\s*(\\d{{8}})', texto)
-    if endereco_match:
-        endereco = f"{{endereco_match.group(1)}} - {{endereco_match.group(2)}}"
-    else:
-        # Busca alternativa para endereço
-        endereco_match = re.search(r'(.+?PALMAS.*?)\\s*-?\\s*(\\d{{8}})', texto)
-        if endereco_match:
-            endereco = f"{{endereco_match.group(1)}} - {{endereco_match.group(2)}}"
-
-    valor = re.search(r'Valor do Documento.*?(\\d{{1,3}}(?:\\.\\d{{3}})*,\\d{{2}})', texto, re.DOTALL)
-
-    vencimento = re.search(r'Local de Pagamento.*?(\\d{{2}}/\\d{{2}}/\\d{{4}})', texto, re.DOTALL)
-
-    descricao = re.search(r'(MENSALIDADE:.*)', texto)
-
-    linha_digitavel = re.search(r'(\\d{{5}}\\.\\d{{5}} \\d{{5}}\\.\\d{{6}} \\d{{5}}\\.\\d{{6}} \\d \\d{{13,14}}-?\\d)', texto)
-
-    # Extrair turma
-    turma_match = re.search(r'TURMA[:\\s]+([A-Z0-9]+)', texto)
-    turma = turma_match.group(1) if turma_match else ''
-
-    # Mapeamento CNAE e atividade
-    if turma.startswith('J'):
-        cnae = '8513900'
-        atividade = '0801'
-    elif turma.startswith('G'):
-        cnae = '8520100'
-        atividade = '0801'
-    else:
-        cnae = ''
-        atividade = ''
-
-    dados = {{
-        'arquivo_pdf': os.path.basename(pdf_path),
-        'nome_cliente': nome.group(1).strip() if nome else '',
-        'cpf_cnpj': cpf_cnpj,
-        'endereco': endereco.strip(),
-        'valor': valor.group(1).replace('.', '').replace(',', '.') if valor else '',
-        'vencimento': vencimento.group(1) if vencimento else '',
-        'descricao': descricao.group(1).strip() if descricao else 'serviços educacionais',
-        'linha_digitavel': linha_digitavel.group(1) if linha_digitavel else '',
-        'turma': turma,
-        'cnae': cnae,
-        'atividade': atividade
-    }}
-
-    return dados
-
-pasta = r'{folder_path}'
-
-if not os.path.exists(pasta):
-    os.makedirs(pasta)
-    print(f'Pasta "{{pasta}}" criada. Coloque seus PDFs de boletos nela e rode o script novamente.')
-    exit()
-
-arquivos = [f for f in os.listdir(pasta) if f.lower().endswith('.pdf')]
-
-if not arquivos:
-    print(f'Nenhum PDF encontrado na pasta "{{pasta}}". Coloque seus boletos lá e rode novamente.')
-    exit()
-
-todos_dados = []
-
-for arquivo in arquivos:
-    caminho = os.path.join(pasta, arquivo)
-    print(f'Extraindo dados de: {{arquivo}}')
-    try:
-        dados = extrair_dados_boleto(caminho)
-        todos_dados.append(dados)
-    except Exception as e:
-        print(f'Erro ao processar {{arquivo}}: {{e}}')
-
-if todos_dados:
-    df = pd.DataFrame(todos_dados)
-    df.to_csv('boletos_extraidos.csv', index=False, encoding='utf-8', sep=';')
-    print(f'Dados extraídos de {{len(todos_dados)}} boletos e salvos em boletos_extraidos.csv')
-else:
-    print('Nenhum dado extraído.')
-""")
-                
-                # Salvar script temporário
-                temp_script_path = 'temp_extract.py'
-                with open(temp_script_path, 'w', encoding='utf-8') as f:
-                    f.write(temp_script)
-                
-                # Executar script temporário
-                result = subprocess.run([sys.executable, temp_script_path], 
-                                      capture_output=True, text=True, encoding='utf-8')
-                
-                # Remover script temporário
-                try:
-                    os.remove(temp_script_path)
-                except:
-                    pass
-                
-                if result.returncode == 0:
-                    output = result.stdout.strip().splitlines() if result.stdout else []
-                    if output:
-                        # Log de debug para ver o output completo
-                        self.log_message(f"Debug - Output completo: {output}", "INFO")
-                        
-                        # Procura por uma linha que contenha 'boletos' ou 'Dados extraídos'
-                        linha_boletos = next((linha for linha in output if 'boletos' in linha or 'Dados extraídos' in linha), None)
-                        if linha_boletos:
-                            self.log_message(f"✅ {linha_boletos}", "SUCCESS")
-                        else:
-                            # Se não encontrar, mostra a última linha ou uma mensagem padrão
-                            ultima_linha = output[-1] if output else "Extração concluída"
-                            self.log_message(f"✅ {ultima_linha}", "SUCCESS")
+                    # Endereço - extração separada com múltiplas estratégias
+                    endereco = ''
+                    
+                    # Estratégia 1: Padrão original
+                    endereco_match = re.search(r'CPF ?/ ?CNPJ[:\s]*[\d.\-/]+\s+(.+?PALMAS.*?)\s*-?\s*(\d{8})', texto_pagina)
+                    if endereco_match:
+                        endereco = f"{endereco_match.group(1)} - {endereco_match.group(2)}"
                     else:
-                        self.log_message("✅ Extração de PDFs concluída com sucesso!", "SUCCESS")
+                        # Estratégia 2: Busca por PALMAS seguido de CEP
+                        endereco_match = re.search(r'(.+?PALMAS.*?)\s*-?\s*(\d{5}-?\d{3})', texto_pagina)
+                        if endereco_match:
+                            endereco = f"{endereco_match.group(1)} - {endereco_match.group(2)}"
+                        else:
+                            # Estratégia 3: Busca por qualquer padrão de CEP após endereço
+                            endereco_match = re.search(r'(.+?)\s*(\d{5}-?\d{3})', texto_pagina)
+                            if endereco_match:
+                                endereco = f"{endereco_match.group(1)} - {endereco_match.group(2)}"
+                            else:
+                                # Estratégia 4: Busca simples por CEP no texto
+                                cep_match = re.search(r'(\d{5}-?\d{3})', texto_pagina)
+                                if cep_match:
+                                    endereco = f"Endereço - {cep_match.group(1)}"
+
+                    valor = re.search(r'Valor do Documento.*?(\d{1,3}(?:\.\d{3})*,\d{2})', texto_pagina, re.DOTALL)
+                    vencimento = re.search(r'Local de Pagamento.*?(\d{2}/\d{2}/\d{4})', texto_pagina, re.DOTALL)
+                    descricao = re.search(r'(MENSALIDADE:.*)', texto_pagina)
+                    linha_digitavel = re.search(r'(\d{5}\.\d{5} \d{5}\.\d{6} \d{5}\.\d{6} \d \d{13,14}-?\d)', texto_pagina)
+
+                    # Extrair turma
+                    turma_match = re.search(r'TURMA[:\s]+([A-Z0-9]+)', texto_pagina)
+                    turma = turma_match.group(1) if turma_match else ''
+
+                    # Mapeamento CNAE e atividade
+                    if turma.startswith('J'):
+                        cnae = '8513900'
+                        atividade = '0801'
+                    elif turma.startswith('G'):
+                        cnae = '8520100'
+                        atividade = '0801'
+                    else:
+                        cnae = ''
+                        atividade = ''
+
+                    dados = {
+                        'arquivo_pdf': os.path.basename(pdf_path),
+                        'pagina': pagina_num,
+                        'nome_cliente': nome.group(1).strip() if nome else '',
+                        'cpf_cnpj': cpf_cnpj,
+                        'endereco': endereco.strip(),
+                        'valor': valor.group(1).replace('.', '').replace(',', '.') if valor else '',
+                        'vencimento': vencimento.group(1) if vencimento else '',
+                        'descricao': descricao.group(1).strip() if descricao else 'serviços educacionais',
+                        'linha_digitavel': linha_digitavel.group(1) if linha_digitavel else '',
+                        'turma': turma,
+                        'cnae': cnae,
+                        'atividade': atividade
+                    }
+
+                    return dados
+
+                def extrair_dados_boleto(pdf_path):
+                    """Extrai dados de um boleto PDF, processando cada página separadamente"""
+                    dados_paginas = []
+                    
+                    with pdfplumber.open(pdf_path) as pdf:
+                        total_paginas = len(pdf.pages)
+                        self.log_message(f"📄 Processando {total_paginas} página(s) do arquivo: {os.path.basename(pdf_path)}", "INFO")
+                        
+                        for pagina_num, page in enumerate(pdf.pages, 1):
+                            try:
+                                texto_pagina = page.extract_text()
+                                
+                                # Verificar se a página contém dados de boleto
+                                if texto_pagina and ('Pagador:' in texto_pagina or 'Valor do Documento' in texto_pagina):
+                                    dados = extrair_dados_boleto_pagina(pdf_path, pagina_num, texto_pagina)
+                                    
+                                    # Verificar se extraiu dados válidos
+                                    if dados['nome_cliente'] or dados['valor']:
+                                        dados_paginas.append(dados)
+                                        self.log_message(f"  ✅ Página {pagina_num}: {dados['nome_cliente']} - R$ {dados['valor']}", "SUCCESS")
+                                    else:
+                                        self.log_message(f"  ⚠️ Página {pagina_num}: Dados insuficientes, ignorando", "WARNING")
+                                else:
+                                    self.log_message(f"  ⚠️ Página {pagina_num}: Não parece ser um boleto, ignorando", "WARNING")
+                                    
+                            except Exception as e:
+                                self.log_message(f"  ❌ Erro ao processar página {pagina_num}: {e}", "ERROR")
+                    
+                    return dados_paginas
+
+                # Processar PDFs
+                arquivos = [f for f in os.listdir(folder_path) if f.lower().endswith('.pdf')]
+
+                if not arquivos:
+                    self.log_message(f"Nenhum PDF encontrado na pasta: {folder_path}", "WARNING")
+                    return
+
+                todos_dados = []
+                total_boletos = 0
+
+                for arquivo in arquivos:
+                    caminho = os.path.join(folder_path, arquivo)
+                    self.log_message(f"📄 Extraindo dados de: {arquivo}", "INFO")
+                    try:
+                        dados_paginas = extrair_dados_boleto(caminho)
+                        todos_dados.extend(dados_paginas)
+                        total_boletos += len(dados_paginas)
+                        self.log_message(f"✅ {len(dados_paginas)} boleto(s) extraído(s) de {arquivo}", "SUCCESS")
+                    except Exception as e:
+                        self.log_message(f"❌ Erro ao processar {arquivo}: {e}", "ERROR")
+
+                if todos_dados:
+                    df = pd.DataFrame(todos_dados)
+                    
+                    # Gerar estatísticas
+                    estatisticas = self.gerar_estatisticas_pdfs(df, arquivos)
+                    
+                    # Salvar no diretório do executável
+                    csv_path = os.path.join(self.get_app_base_path(), 'boletos_extraidos.csv')
+                    df.to_csv(csv_path, index=False, encoding='utf-8', sep=';')
+                    
+                    # Exibir estatísticas
+                    self.log_message(f"✅ Dados extraídos de {total_boletos} boletos ({len(arquivos)} arquivos) e salvos em {csv_path}", "SUCCESS")
+                    self.log_message(f"📊 Estatísticas: {estatisticas}", "INFO")
                     self.update_data_status(True)
                 else:
-                    self.log_message(f"❌ Erro na extração: {result.stderr}", "ERROR")
+                    self.log_message("❌ Nenhum dado extraído.", "WARNING")
                     
             except Exception as e:
                 self.log_message(f"❌ Erro durante extração: {e}", "ERROR")
         
         threading.Thread(target=extract_thread, daemon=True).start()
     
+    def gerar_estatisticas_pdfs(self, df, arquivos):
+        """Gera estatísticas sobre os PDFs processados"""
+        try:
+            # Estatísticas por arquivo
+            stats_por_arquivo = df.groupby('arquivo_pdf').agg({
+                'pagina': ['count', 'min', 'max'],
+                'valor': 'sum'
+            }).round(2)
+            
+            # Contar arquivos com múltiplas páginas
+            arquivos_multiplas_paginas = 0
+            total_paginas_multiplas = 0
+            
+            for arquivo in arquivos:
+                dados_arquivo = df[df['arquivo_pdf'] == arquivo]
+                if len(dados_arquivo) > 1:
+                    arquivos_multiplas_paginas += 1
+                    total_paginas_multiplas += len(dados_arquivo)
+            
+            # Estatísticas gerais
+            total_arquivos = len(arquivos)
+            total_boletos = len(df)
+            valor_total = df['valor'].astype(float).sum()
+            
+            estatisticas = {
+                'total_arquivos': total_arquivos,
+                'total_boletos': total_boletos,
+                'arquivos_com_multiplas_paginas': arquivos_multiplas_paginas,
+                'total_paginas_multiplas': total_paginas_multiplas,
+                'valor_total': f"R$ {valor_total:,.2f}",
+                'media_boletos_por_arquivo': round(total_boletos / total_arquivos, 2) if total_arquivos > 0 else 0
+            }
+            
+            # Formatar mensagem
+            msg = f"{total_arquivos} arquivo(s), {total_boletos} boleto(s) total"
+            if arquivos_multiplas_paginas > 0:
+                msg += f", {arquivos_multiplas_paginas} arquivo(s) com múltiplas páginas ({total_paginas_multiplas} páginas)"
+            msg += f", valor total: {estatisticas['valor_total']}"
+            
+            return msg
+            
+        except Exception as e:
+            return f"Erro ao gerar estatísticas: {e}"
+    
     def load_data(self):
         """Carrega dados do CSV"""
         try:
-            if not os.path.exists('boletos_extraidos.csv'):
-                self.log_message("❌ Arquivo boletos_extraidos.csv não encontrado!", "ERROR")
-                self.log_message("Execute primeiro a extração de PDFs", "WARNING")
+            # Determinar o caminho do arquivo CSV baseado no diretório do executável
+            csv_path = os.path.join(self.get_app_base_path(), 'boletos_extraidos.csv')
+            
+            if not os.path.exists(csv_path):
+                self.log_message(f"❌ Arquivo boletos_extraidos.csv não encontrado em: {csv_path}", "ERROR")
+                self.log_message("📄 Execute primeiro a extração de PDFs da pasta selecionada", "WARNING")
                 return
             
             # Carregar dados
-            df = pd.read_csv('boletos_extraidos.csv', sep=';', encoding='utf-8')
+            df = pd.read_csv(csv_path, sep=';', encoding='utf-8')
             
             if df.empty:
                 self.log_message("❌ Nenhum dado encontrado no CSV!", "ERROR")
@@ -466,6 +588,8 @@ else:
             self.update_data_status(True)
             
             self.log_message(f"✅ Dados carregados: {len(df)} registros", "SUCCESS")
+            self.log_message("📋 Selecione os boletos que deseja processar clicando nos checkboxes", "INFO")
+            self.log_message("💡 Use os botões 'Selecionar Todos', 'Desmarcar Todos' ou 'Inverter Seleção'", "INFO")
             
         except Exception as e:
             self.log_message(f"❌ Erro ao carregar dados: {e}", "ERROR")
@@ -474,19 +598,166 @@ else:
     
     def update_data_display(self, df):
         """Atualiza a exibição dos dados"""
-        # Limpar treeview
+        # Limpar treeview e estados
         for item in self.data_tree.get_children():
             self.data_tree.delete(item)
+        self.checkbox_states.clear()
         
-        # Adicionar dados
-        for _, row in df.iterrows():
-            self.data_tree.insert('', tk.END, values=(
+        # Adicionar dados com checkboxes
+        for index, (_, row) in enumerate(df.iterrows()):
+            item_id = self.data_tree.insert('', tk.END, values=(
+                '☐',  # Checkbox vazio
                 row.get('arquivo_pdf', ''),
+                row.get('pagina', ''),
                 row.get('nome_cliente', ''),
                 f"R$ {row.get('valor', '0')}",
                 row.get('vencimento', ''),
                 row.get('turma', '')
             ))
+            # Inicializar estado do checkbox como desmarcado
+            self.checkbox_states[item_id] = False
+    
+    def on_tree_click(self, event):
+        """Manipula cliques no treeview para alternar checkboxes"""
+        region = self.data_tree.identify("region", event.x, event.y)
+        if region == "heading":
+            return
+        
+        item = self.data_tree.identify_row(event.y)
+        if not item:
+            return
+        
+        column = self.data_tree.identify_column(event.x)
+        if column == '#1':  # Coluna do checkbox
+            # Obter dados do item antes de alterar
+            item_values = self.data_tree.item(item, 'values')
+            nome_cliente = item_values[3] if len(item_values) > 3 else 'N/A'
+            
+            # Alternar estado do checkbox
+            current_state = self.checkbox_states.get(item, False)
+            new_state = not current_state
+            self.checkbox_states[item] = new_state
+            
+            # Atualizar visual do checkbox
+            values = list(self.data_tree.item(item, 'values'))
+            values[0] = '☑' if new_state else '☐'
+            self.data_tree.item(item, values=values)
+            
+            # Log detalhado do clique
+            self.log_message(f"🖱️ Clique no checkbox: {nome_cliente} - Estado: {current_state} → {new_state}", "INFO")
+            
+            # Atualizar contador de selecionados
+            self.update_selection_count()
+    
+
+    
+    def select_all(self):
+        """Seleciona todos os boletos"""
+        for item in self.data_tree.get_children():
+            self.checkbox_states[item] = True
+            values = list(self.data_tree.item(item, 'values'))
+            values[0] = '☑'
+            self.data_tree.item(item, values=values)
+        self.update_selection_count()
+        self.log_message("✅ Todos os boletos selecionados", "SUCCESS")
+    
+    def deselect_all(self):
+        """Desmarca todos os boletos"""
+        for item in self.data_tree.get_children():
+            self.checkbox_states[item] = False
+            values = list(self.data_tree.item(item, 'values'))
+            values[0] = '☐'
+            self.data_tree.item(item, values=values)
+        self.update_selection_count()
+        self.log_message("❌ Todos os boletos desmarcados", "WARNING")
+    
+    def invert_selection(self):
+        """Inverte a seleção atual"""
+        for item in self.data_tree.get_children():
+            current_state = self.checkbox_states.get(item, False)
+            self.checkbox_states[item] = not current_state
+            values = list(self.data_tree.item(item, 'values'))
+            values[0] = '☑' if self.checkbox_states[item] else '☐'
+            self.data_tree.item(item, values=values)
+        self.update_selection_count()
+        self.log_message("🔄 Seleção invertida", "INFO")
+    
+    def update_selection_count(self):
+        """Atualiza o contador de boletos selecionados"""
+        selected_count = sum(1 for state in self.checkbox_states.values() if state)
+        total_count = len(self.checkbox_states)
+        
+        # Log detalhado dos itens selecionados
+        if selected_count > 0:
+            selected_items = []
+            for item, state in self.checkbox_states.items():
+                if state:
+                    item_values = self.data_tree.item(item, 'values')
+                    nome_cliente = item_values[3] if len(item_values) > 3 else 'N/A'
+                    selected_items.append(nome_cliente)
+            
+            self.log_message(f"📊 {selected_count}/{total_count} boletos selecionados: {', '.join(selected_items)}", "INFO")
+        else:
+            self.log_message(f"📊 {selected_count}/{total_count} boletos selecionados", "INFO")
+    
+    def get_selected_data(self):
+        """Retorna apenas os dados dos boletos selecionados"""
+        if self.current_data is None:
+            return None
+        
+        selected_indices = []
+        tree_items = self.data_tree.get_children()
+        
+        # Log detalhado para debug
+        self.log_message(f"🔍 Verificando seleção: {len(tree_items)} itens na árvore", "INFO")
+        
+        # Criar mapeamento entre item da árvore e índice do DataFrame
+        # Usar os dados do item da árvore para encontrar o índice correto no DataFrame
+        for i, item in enumerate(tree_items):
+            checkbox_state = self.checkbox_states.get(item, False)
+            
+            # Obter dados do item da árvore
+            item_values = self.data_tree.item(item, 'values')
+            nome_cliente = item_values[3] if len(item_values) > 3 else ''
+            arquivo = item_values[1] if len(item_values) > 1 else ''
+            pagina = item_values[2] if len(item_values) > 2 else ''
+            
+            self.log_message(f"  Item {i}: {item} - Cliente: {nome_cliente} - Selecionado: {checkbox_state}", "INFO")
+            
+            if checkbox_state:
+                # Encontrar o índice correto no DataFrame baseado nos dados
+                # Procurar por correspondência exata
+                matching_indices = []
+                for idx, (_, row) in enumerate(self.current_data.iterrows()):
+                    if (row.get('nome_cliente', '') == nome_cliente and 
+                        row.get('arquivo_pdf', '') == arquivo and 
+                        str(row.get('pagina', '')) == str(pagina)):
+                        matching_indices.append(idx)
+                
+                if matching_indices:
+                    # Usar o primeiro índice encontrado
+                    selected_indices.append(matching_indices[0])
+                    self.log_message(f"  ✅ Adicionado índice {matching_indices[0]} para cliente: {nome_cliente}", "INFO")
+                else:
+                    # Fallback: usar índice baseado na posição (comportamento anterior)
+                    selected_indices.append(i)
+                    self.log_message(f"  ⚠️ Usando índice fallback {i} para cliente: {nome_cliente}", "WARNING")
+        
+        if not selected_indices:
+            self.log_message("❌ Nenhum boleto selecionado!", "ERROR")
+            return None
+        
+        # Log para debug
+        self.log_message(f"📋 Índices selecionados: {selected_indices}", "INFO")
+        
+        selected_data = self.current_data.iloc[selected_indices]
+        self.log_message(f"✅ {len(selected_data)} boletos selecionados para processamento", "SUCCESS")
+        
+        # Log dos dados selecionados
+        for i, (_, row) in enumerate(selected_data.iterrows()):
+            self.log_message(f"  Boleto {i+1}: {row.get('nome_cliente', 'N/A')}", "INFO")
+        
+        return selected_data
         
 
     
@@ -503,6 +774,35 @@ else:
             self.webiss_status_label.config(text="✅ WebISS conectado", fg='#27ae60')
         else:
             self.webiss_status_label.config(text="❌ WebISS não conectado", fg='#e74c3c')
+    
+    def update_license_status(self):
+        """Atualiza informações da licença"""
+        try:
+            from utils.license_checker import LicenseChecker
+            license_checker = LicenseChecker()
+            info = license_checker.obter_info_licenca()
+            
+            if info:
+                self.license_status_label.config(
+                    text=f"✅ Licença válida - {info['dias_restantes']} dias restantes",
+                    fg='#27ae60'
+                )
+                self.license_info_label.config(
+                    text=f"Cliente: {info['cliente']} | Expira: {info['data_expiracao']} | Versão: {info['versao']}"
+                )
+            else:
+                self.license_status_label.config(
+                    text="❌ Licença não encontrada",
+                    fg='#e74c3c'
+                )
+                self.license_info_label.config(text="")
+                
+        except Exception as e:
+            self.license_status_label.config(
+                text="❌ Erro ao verificar licença",
+                fg='#e74c3c'
+            )
+            self.license_info_label.config(text="")
     
     def connect_webiss(self):
         """Conecta ao WebISS"""
@@ -524,54 +824,118 @@ else:
     
     def start_automation(self):
         """Inicia a automação completa"""
+        self.log_message("🚀 Iniciando automação...", "INFO")
+        
         if self.current_data is None:
             self.log_message("❌ Carregue os dados primeiro!", "ERROR")
             return
+        
+        self.log_message(f"📊 Dados carregados: {len(self.current_data)} registros", "INFO")
+        
         if not self.automation:
             self.log_message("❌ Conecte ao WebISS primeiro!", "ERROR")
             return
+        
+        self.log_message("✅ WebISS conectado", "INFO")
+        
+        # Verificar se há boletos selecionados
+        self.log_message("🔍 Verificando boletos selecionados...", "INFO")
+        
+        # Log do estado dos checkboxes antes de chamar get_selected_data
+        tree_items = self.data_tree.get_children()
+        self.log_message(f"📋 Total de itens na árvore: {len(tree_items)}", "INFO")
+        
+        selected_count = 0
+        for i, item in enumerate(tree_items):
+            checkbox_state = self.checkbox_states.get(item, False)
+            if checkbox_state:
+                selected_count += 1
+                item_values = self.data_tree.item(item, 'values')
+                nome_cliente = item_values[3] if len(item_values) > 3 else 'N/A'
+                self.log_message(f"  ✅ Item {i} selecionado: {nome_cliente}", "INFO")
+        
+        self.log_message(f"📊 Total de itens selecionados na interface: {selected_count}", "INFO")
+        
+        selected_data = self.get_selected_data()
+        if selected_data is None:
+            self.log_message("❌ Nenhum boleto selecionado!", "ERROR")
+            return
+        
+        # Log adicional para debug
+        self.log_message(f"📊 Dados selecionados: {len(selected_data)} boletos", "INFO")
+        self.log_message(f"📋 Índices dos dados: {list(selected_data.index)}", "INFO")
+        
         def automation_thread():
             try:
+                self.log_message("🔄 Iniciando thread de automação...", "INFO")
                 self.processing = True
                 self.update_ui_state()
                 # Processar todos os boletos
                 self.process_all_boletos()
             except Exception as e:
                 self.log_message(f"❌ Erro durante a automação: {e}", "ERROR")
+                import traceback
+                self.log_message(f"❌ Traceback: {traceback.format_exc()}", "ERROR")
             finally:
                 self.processing = False
                 self.update_ui_state()
+                self.log_message("🏁 Thread de automação finalizada", "INFO")
+        
+        self.log_message("🔄 Iniciando thread de automação...", "INFO")
         threading.Thread(target=automation_thread, daemon=True).start()
     
     def process_all_boletos(self):
-        """Processa todos os boletos de forma cíclica"""
-        total_boletos = len(self.current_data)
-        self.log_message(f"🚀 Iniciando processamento de {total_boletos} boletos", "INFO")
-        self.is_primeiro_boleto = True
+        """Processa apenas os boletos selecionados"""
+        # Obter dados selecionados
+        self.log_message("🔄 Obtendo dados selecionados em process_all_boletos...", "INFO")
+        selected_data = self.get_selected_data()
+        if selected_data is None:
+            self.log_message("❌ Nenhum dado selecionado em process_all_boletos", "ERROR")
+            return
         
-        for index, (_, row) in enumerate(self.current_data.iterrows(), 1):
+        total_boletos = len(selected_data)
+        self.log_message(f"🚀 Iniciando processamento de {total_boletos} boletos selecionados", "INFO")
+        self.log_message(f"📋 Índices dos dados em process_all_boletos: {list(selected_data.index)}", "INFO")
+        
+        # Criar lista de tuplas (índice_real, row) para manter os índices originais
+        boletos_para_processar = []
+        self.log_message("🔧 Criando lista de boletos para processar...", "INFO")
+        for idx, (_, row) in enumerate(selected_data.iterrows()):
+            # Obter o índice real do DataFrame
+            indice_real = selected_data.index[idx]
+            boletos_para_processar.append((indice_real, row))
+            self.log_message(f"📋 Adicionado boleto {idx+1}: índice {indice_real}, cliente: {row.get('nome_cliente', 'N/A')}", "INFO")
+        
+        self.log_message(f"✅ Lista criada com {len(boletos_para_processar)} boletos", "INFO")
+        
+        for posicao, (indice_real, row) in enumerate(boletos_para_processar, 1):
             if not self.processing:  # Verificar se foi interrompido
                 self.log_message("⏹️ Processamento interrompido", "WARNING")
                 break
             
-            self.log_message(f"=== PROCESSANDO BOLETO {index}/{total_boletos} ===", "INFO")
+            self.log_message(f"=== PROCESSANDO BOLETO {posicao}/{total_boletos} (Índice original: {indice_real}) ===", "INFO")
             
             # Processar um boleto
-            success = self.process_single_boleto(row)
+            success = self.process_single_boleto(row, posicao, total_boletos, indice_real)
             
             if success:
-                self.log_message(f"✅ Boleto {index} processado com sucesso!", "SUCCESS")
+                self.log_message(f"✅ Boleto {posicao} processado com sucesso!", "SUCCESS")
             else:
-                self.log_message(f"❌ Erro ao processar boleto {index}", "ERROR")
+                self.log_message(f"❌ Erro ao processar boleto {posicao}", "ERROR")
                 continue
         
-        self.log_message("🎉 Processamento de todos os boletos concluído!", "SUCCESS")
+        self.log_message("🎉 Processamento dos boletos selecionados concluído!", "SUCCESS")
     
-    def process_single_boleto(self, row_data):
+    def process_single_boleto(self, row_data, posicao, total_boletos, indice_real=None):
         """Processa um único boleto"""
         try:
+            import time
             # Preparar dados do boleto
             test_data = row_data.to_dict()
+            
+            # Log do índice real para debug
+            if indice_real is not None:
+                self.log_message(f"📋 Processando boleto com índice original: {indice_real}", "INFO")
             
             # Extrair turma do campo descrição
             turma = ''
@@ -592,42 +956,54 @@ else:
                 'turma': turma
             }
             
-            # Extrair CEP do endereço se disponível
+            # Extrair CEP do endereço se disponível (múltiplas estratégias)
             if 'endereco' in processed_data and processed_data['endereco']:
                 import re
+                
+                # Estratégia 1: CEP no formato padrão (5 dígitos + hífen + 3 dígitos)
                 cep_match = re.search(r'(\d{5})-?(\d{3})', processed_data['endereco'])
                 if cep_match:
                     processed_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                    self.log_message(f"✅ CEP extraído do endereço: {processed_data['cep']}", "INFO")
+                else:
+                    # Estratégia 2: CEP sem hífen (8 dígitos consecutivos)
+                    cep_match = re.search(r'(\d{8})', processed_data['endereco'])
+                    if cep_match:
+                        cep = cep_match.group(1)
+                        processed_data['cep'] = f"{cep[:5]}-{cep[5:]}"
+                        self.log_message(f"✅ CEP extraído do endereço (sem hífen): {processed_data['cep']}", "INFO")
+                    else:
+                        # Estratégia 3: Buscar CEP em qualquer lugar do texto
+                        cep_match = re.search(r'(\d{5})[.\-\s]*(\d{3})', processed_data['endereco'])
+                        if cep_match:
+                            processed_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                            self.log_message(f"✅ CEP extraído do endereço (padrão alternativo): {processed_data['cep']}", "INFO")
+                        else:
+                            self.log_message(f"⚠️ CEP não encontrado no endereço: {processed_data['endereco']}", "WARNING")
+                            # Tentar extrair do texto completo se disponível
+                            if 'descricao' in processed_data and processed_data['descricao']:
+                                cep_match = re.search(r'(\d{5})-?(\d{3})', processed_data['descricao'])
+                                if cep_match:
+                                    processed_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                                    self.log_message(f"✅ CEP extraído da descrição: {processed_data['cep']}", "INFO")
+            else:
+                self.log_message("⚠️ Endereço não disponível para extrair CEP", "WARNING")
+            
+            # Log dos dados processados para debug
+            self.log_message(f"Dados processados: {processed_data}", "INFO")
             
             self.log_message(f"Processando: {processed_data['nome_cliente']}", "INFO")
             
             # Navegar para nova NFSe apenas no primeiro boleto
-            if getattr(self, 'is_primeiro_boleto', False):
+            if posicao == 1:  # Primeiro boleto
+                self.log_message("🔄 Primeiro boleto - navegando para nova NFSe...", "INFO")
                 if not self.automation.navigate_to_new_nfse():
                     self.log_message("❌ Falha ao navegar para nova NFSe", "ERROR")
                     return False
-                self.is_primeiro_boleto = False
+                time.sleep(1)  # Aguardar carregamento completo
             else:
-                # Para os demais boletos, clicar apenas em "Criar" no menu lateral
-                self.log_message("🔄 Voltando para tela de criação de nota... (clicando apenas em Criar)", "INFO")
-                try:
-                    from selenium.webdriver.common.by import By
-                    from selenium.webdriver.support.ui import WebDriverWait
-                    from selenium.webdriver.support import expected_conditions as EC
-                    criar_menu = WebDriverWait(self.automation.driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, "//span[contains(text(), 'Criar')]"))
-                    )
-                    criar_menu.click()
-                    import time
-                    time.sleep(1.5)
-                except Exception as e:
-                    self.log_message(f"❌ Falha ao clicar em Criar: {e}", "ERROR")
-                    return False
-
-            # Clicar em Próximo para ir ao Step 2
-            if not self.automation.click_proximo():
-                self.log_message("❌ Falha ao avançar para Step 2", "ERROR")
-                return False
+                self.log_message(f"🔄 Boleto {posicao} - usando nota já criada...", "INFO")
+                # Para os demais boletos, não navegar aqui - apenas após emitir a nota anterior
 
             # Preencher formulário do tomador (Step 2)
             self.log_message("=== PREENCHENDO STEP 2 - TOMADOR ===", "INFO")
@@ -642,7 +1018,6 @@ else:
                 return False
             
             # Aguardar carregamento do Step 3
-            import time
             time.sleep(1)
             
             # Preencher Step 3 usando a função sem scroll
@@ -675,7 +1050,27 @@ else:
                 self.log_message("❌ Falha ao salvar rascunho", "ERROR")
                 return False
 
-            self.log_message("✅ Boleto processado com sucesso!", "SUCCESS")
+            # Aguardar um pouco para o rascunho ser salvo
+            time.sleep(2)
+
+            # Clicar em Emitir nota fiscal
+            self.log_message("🚀 Emitindo nota fiscal...", "INFO")
+            if not self.automation.emitir_nota_fiscal():
+                self.log_message("❌ Falha ao emitir nota fiscal", "ERROR")
+                return False
+
+            # Aguardar emissão da nota
+            time.sleep(3)
+
+            # Clicar em "Criar" para preparar a próxima nota (apenas se não for o último boleto)
+            if posicao < total_boletos:  # Se não for o último boleto
+                self.log_message("🔄 Preparando próxima nota...", "INFO")
+                if not self.automation.navegar_para_proxima_nota():
+                    self.log_message("❌ Falha ao preparar próxima nota", "ERROR")
+                    return False  # Falhar se não conseguir preparar próxima nota
+                self.log_message("✅ Próxima nota preparada", "SUCCESS")
+
+            self.log_message("✅ Boleto processado e nota emitida com sucesso!", "SUCCESS")
             return True
         except Exception as e:
             self.log_message(f"❌ Erro durante processamento do boleto: {e}", "ERROR")
@@ -705,8 +1100,12 @@ else:
     
     def run(self):
         """Executa a interface"""
-        self.log_message("🚀 Interface iniciada com sucesso!", "SUCCESS")
+        self.log_message("Interface iniciada com sucesso!", "SUCCESS")
         self.log_message("Siga os passos: 1) Extrair PDFs 2) Carregar Dados 3) Conectar WebISS 4) Iniciar Automação", "INFO")
+        
+        # Atualizar status da licença
+        self.update_license_status()
+        
         try:
             self.root.mainloop()
         except KeyboardInterrupt:

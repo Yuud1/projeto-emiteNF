@@ -1,0 +1,26 @@
+# Dependências para versão de produção
+# Versões compatíveis com Python 3.13
+
+# Automação web
+selenium==4.15.2
+webdriver-manager==4.0.1
+
+# Processamento de dados (versões mais recentes)
+pandas>=2.2.0
+openpyxl>=3.1.2
+
+# Configuração e ambiente
+python-dotenv==1.0.0
+
+# Requisições HTTP
+requests>=2.31.0
+
+# Parsing HTML/XML
+beautifulsoup4>=4.12.2
+lxml>=4.9.3
+
+# Processamento de imagens
+Pillow>=10.1.0
+
+# Compilação (apenas para build)
+pyinstaller>=6.2.0 

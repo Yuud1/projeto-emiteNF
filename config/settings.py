@@ -14,13 +14,23 @@ class Settings:
     """Classe para gerenciar configurações do sistema"""
     
     def __init__(self):
+        # Inicializar valores padrão
+        self.username = ''
+        self.password = ''
+        self.webiss_url = 'https://palmasto.webiss.com.br'
+        self.headless_mode = False
+        self.timeout = 15
+        self.delay_between_actions = 2.0
+        self.data_directory = 'data'
+        self.logs_directory = 'logs'
+        
         # Carregar configurações do arquivo .env se existir
         self.load_from_env_file('.env')
         
         # Configurações do WebISS (com fallback para variáveis de ambiente)
-        self.username = os.getenv('WEBISS_USERNAME', self.username if hasattr(self, 'username') else '')
-        self.password = os.getenv('WEBISS_PASSWORD', self.password if hasattr(self, 'password') else '')
-        self.webiss_url = os.getenv('WEBISS_URL', self.webiss_url if hasattr(self, 'webiss_url') else 'https://webiss.exemplo.com')
+        self.username = os.getenv('WEBISS_USERNAME', self.username)
+        self.password = os.getenv('WEBISS_PASSWORD', self.password)
+        self.webiss_url = os.getenv('WEBISS_URL', self.webiss_url)
         
         # Configurações de automação (com fallback para variáveis de ambiente)
         self.headless_mode = os.getenv('HEADLESS_MODE', str(self.headless_mode if hasattr(self, 'headless_mode') else False)).lower() == 'true'
@@ -57,6 +67,10 @@ class Settings:
             file_path: Caminho do arquivo .env
         """
         try:
+            # Sempre procurar o arquivo .env no diretório atual
+            if not os.path.isabs(file_path):
+                file_path = os.path.join(os.getcwd(), file_path)
+            
             if os.path.exists(file_path):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     for line in f:
@@ -87,6 +101,10 @@ class Settings:
                 logger.info(f"Configurações carregadas de: {file_path}")
             else:
                 logger.warning(f"Arquivo de configuração não encontrado: {file_path}")
+                logger.info("📝 Para configurar suas credenciais:")
+                logger.info("   1. Copie o arquivo 'env_exemplo.txt' para '.env'")
+                logger.info("   2. Edite o arquivo '.env' com suas credenciais do WebISS")
+                logger.info("   3. Execute o aplicativo novamente")
                 
         except Exception as e:
             logger.error(f"Erro ao carregar configurações: {e}") 

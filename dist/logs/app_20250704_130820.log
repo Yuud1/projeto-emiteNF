@@ -1,0 +1,125 @@
+2025-07-04 13:08:22,365 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 13:08:22,450 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 13:11:05,282 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 13:11:05,282 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 13:11:06,307 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:11:06,846 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:11:07,338 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 13:11:07,357 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 13:11:09,669 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 13:11:09,669 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 13:11:18,378 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 13:11:18,381 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 13:11:18,389 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 13:11:18,398 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 13:11:18,405 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 13:11:18,412 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 13:11:18,419 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 13:11:19,750 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 13:11:20,257 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 13:11:20,265 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 13:11:20,320 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 13:11:31,746 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 13:11:32,804 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 13:11:36,169 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 13:11:36,192 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:11:37,237 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 13:11:37,249 - webiss_automation - INFO - === PREENCHENDO FORMULÁRIO TOMADOR ===
+2025-07-04 13:11:37,249 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '56543883120', 'nome_cliente': 'TARCIA DE SOUZA CASTRO MAIA', 'endereco': 'SUL (ARSO 33) QI-17 RUA 04 LOTE 11 - SUL, PALMAS / TO - 77015470', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701560 - ANA LUISA CASTRO MAIA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77015-470'}
+2025-07-04 13:11:37,458 - webiss_automation - INFO - ✅ Campo cpf_cnpj preenchido: 56543883120 (usando: //input[@placeholder='Número do documento do tomador'])
+2025-07-04 13:11:37,751 - webiss_automation - INFO - ✅ Campo nome_cliente preenchido: TARCIA DE SOUZA CASTRO MAIA (usando: //input[@placeholder='Razão social do tomador'])
+2025-07-04 13:11:37,787 - webiss_automation - WARNING - ❌ Campo cep não encontrado em nenhum XPath
+2025-07-04 13:11:37,787 - webiss_automation - INFO - ℹ️ Pulando aguardo do município para otimização
+2025-07-04 13:11:37,788 - webiss_automation - INFO - ✅ Formulário do tomador preenchido com sucesso!
+2025-07-04 13:11:37,795 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:11:38,295 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:11:38,443 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:11:39,443 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:11:39,464 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:11:39,705 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:11:40,713 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:11:40,719 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:11:40,719 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:11:40,719 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:11:40,719 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:11:41,730 - webiss_automation - INFO - === PREENCHENDO STEP 3 - SERVIÇOS (SEM SCROLL) ===
+2025-07-04 13:11:41,730 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '56543883120', 'nome_cliente': 'TARCIA DE SOUZA CASTRO MAIA', 'endereco': 'SUL (ARSO 33) QI-17 RUA 04 LOTE 11 - SUL, PALMAS / TO - 77015470', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701560 - ANA LUISA CASTRO MAIA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77015-470'}
+2025-07-04 13:11:41,735 - webiss_automation - INFO - ✅ Ano preenchido via JavaScript: 2025
+2025-07-04 13:11:41,742 - webiss_automation - INFO - ✅ Mês selecionado via JavaScript: 7
+2025-07-04 13:11:41,972 - webiss_automation - INFO - ✅ Tipo de atividade selecionado via JavaScript
+2025-07-04 13:11:41,984 - webiss_automation - INFO - ✅ CNAE selecionado via JavaScript (índice 2)
+2025-07-04 13:11:41,989 - webiss_automation - INFO - ✅ Valor do serviço preenchido via JavaScript: 1155.81
+2025-07-04 13:11:42,997 - webiss_automation - INFO - ✅ Descrição preenchida via JavaScript
+2025-07-04 13:11:42,998 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:11:42,998 - webiss_automation - INFO - Screenshot final da Step 3 (sem scroll) salvo: step3_sem_scroll.png
+2025-07-04 13:11:42,998 - webiss_automation - INFO - ✅ [SERVIÇOS] Etapa de serviços preenchida com sucesso (sem scroll)!
+2025-07-04 13:11:44,010 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:11:44,511 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:11:44,531 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:11:45,532 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:11:45,542 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:11:46,641 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:11:47,653 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:11:47,659 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:11:47,659 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:11:47,660 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:11:47,660 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:11:49,181 - webiss_automation - INFO - Aba 'Valores' ativada via JS.
+2025-07-04 13:11:49,190 - webiss_automation - INFO - Campo de valor do serviço presente no DOM.
+2025-07-04 13:11:49,210 - webiss_automation - INFO - Tentando preencher valor do serviço via JS: 1155.81
+2025-07-04 13:11:49,720 - webiss_automation - INFO - Valor no campo após envio: 1155.81
+2025-07-04 13:11:49,720 - webiss_automation - INFO - Automação parada após preencher valor do serviço no Step 4.
+2025-07-04 13:11:49,752 - webiss_automation - INFO - Botão Salvar rascunho encontrado: //a[contains(@class, 'salvar-rascunho')]
+2025-07-04 13:11:52,266 - webiss_automation - INFO - Botão Salvar rascunho clicado
+2025-07-04 13:11:55,304 - webiss_automation - INFO - Botão Emitir encontrado via CSS selector
+2025-07-04 13:11:55,319 - webiss_automation - INFO - Aguardando botão sair do estado de loading...
+2025-07-04 13:11:58,310 - webiss_automation - INFO - Botão Emitir clicado via JavaScript
+2025-07-04 13:12:01,319 - webiss_automation - INFO - ✅ Nota fiscal emitida com sucesso!
+2025-07-04 13:12:06,895 - webiss_automation - INFO - === PREENCHENDO FORMULÁRIO TOMADOR ===
+2025-07-04 13:12:06,896 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '93811810120', 'nome_cliente': 'MARIA ABADIA MOREIRA DA SA', 'endereco': 'SUL ALAMEDA VOLPI LOTE 15 - PLANO DIRETOR SUL, PALMAS / TO - 77050022', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701428 - ANA SOFIA MOREIRA DINIZ DE SA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77050-022'}
+2025-07-04 13:12:06,948 - webiss_automation - WARNING - ❌ Campo cpf_cnpj não encontrado em nenhum XPath
+2025-07-04 13:12:06,996 - webiss_automation - WARNING - ❌ Campo nome_cliente não encontrado em nenhum XPath
+2025-07-04 13:12:07,016 - webiss_automation - WARNING - ❌ Campo cep não encontrado em nenhum XPath
+2025-07-04 13:12:07,016 - webiss_automation - INFO - ℹ️ Pulando aguardo do município para otimização
+2025-07-04 13:12:07,017 - webiss_automation - INFO - ✅ Formulário do tomador preenchido com sucesso!
+2025-07-04 13:12:07,023 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:12:07,523 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:12:07,542 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:12:08,543 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:12:08,559 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:12:08,566 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:12:09,573 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:12:09,578 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:12:09,579 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:12:09,579 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:12:09,579 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:12:10,591 - webiss_automation - INFO - === PREENCHENDO STEP 3 - SERVIÇOS (SEM SCROLL) ===
+2025-07-04 13:12:10,591 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '93811810120', 'nome_cliente': 'MARIA ABADIA MOREIRA DA SA', 'endereco': 'SUL ALAMEDA VOLPI LOTE 15 - PLANO DIRETOR SUL, PALMAS / TO - 77050022', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701428 - ANA SOFIA MOREIRA DINIZ DE SA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77050-022'}
+2025-07-04 13:12:10,596 - webiss_automation - INFO - ✅ Ano preenchido via JavaScript: 2025
+2025-07-04 13:12:10,600 - webiss_automation - INFO - ✅ Mês selecionado via JavaScript: 7
+2025-07-04 13:12:10,795 - webiss_automation - INFO - ✅ Tipo de atividade selecionado via JavaScript
+2025-07-04 13:12:10,799 - webiss_automation - INFO - ✅ CNAE selecionado via JavaScript (índice 2)
+2025-07-04 13:12:10,804 - webiss_automation - INFO - ✅ Valor do serviço preenchido via JavaScript: 1155.81
+2025-07-04 13:12:11,810 - webiss_automation - INFO - ✅ Descrição preenchida via JavaScript
+2025-07-04 13:12:11,810 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:12:11,810 - webiss_automation - INFO - Screenshot final da Step 3 (sem scroll) salvo: step3_sem_scroll.png
+2025-07-04 13:12:11,810 - webiss_automation - INFO - ✅ [SERVIÇOS] Etapa de serviços preenchida com sucesso (sem scroll)!
+2025-07-04 13:12:12,817 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:12:13,317 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:12:13,334 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:12:14,334 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:12:14,352 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:12:14,588 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:12:15,606 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:12:15,610 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:12:15,611 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:12:15,611 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:12:15,611 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:12:17,132 - webiss_automation - INFO - Aba 'Valores' ativada via JS.
+2025-07-04 13:12:17,138 - webiss_automation - INFO - Campo de valor do serviço presente no DOM.
+2025-07-04 13:12:17,163 - webiss_automation - INFO - Tentando preencher valor do serviço via JS: 1155.81
+2025-07-04 13:12:17,670 - webiss_automation - INFO - Valor no campo após envio: 1155.81
+2025-07-04 13:12:17,671 - webiss_automation - INFO - Automação parada após preencher valor do serviço no Step 4.
+2025-07-04 13:12:48,348 - webiss_automation - ERROR - Botão Salvar rascunho não encontrado em nenhum seletor
+2025-07-04 13:12:48,349 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:21:02,714 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectionResetError(10054, 'Foi forçado o cancelamento de uma conexão existente pelo host remoto', None, 10054, None)': /session/731192394d5bcaef41eb0646b1bf7947

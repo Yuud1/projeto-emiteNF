@@ -1,0 +1,28 @@
+2025-07-04 13:25:03,718 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 13:25:03,804 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 13:27:34,129 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 13:27:34,135 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 13:27:35,127 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:27:35,607 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:27:36,086 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 13:27:36,091 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 13:27:37,560 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 13:27:37,560 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 13:27:41,322 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 13:27:41,328 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 13:27:41,340 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 13:27:41,348 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 13:27:41,356 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 13:27:41,364 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 13:27:41,373 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 13:27:42,751 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 13:27:43,255 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 13:27:43,258 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 13:27:43,274 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 13:27:45,643 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 13:27:46,724 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 13:27:49,750 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 13:27:49,816 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:27:50,856 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 13:27:50,870 - webiss_automation - INFO - 🔄 Navegando para próxima nota...
+2025-07-04 13:27:55,607 - webiss_automation - INFO - ✅ Navegação para próxima nota via menu Criar

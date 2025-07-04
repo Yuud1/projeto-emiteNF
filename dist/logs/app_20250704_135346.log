@@ -1,0 +1,73 @@
+2025-07-04 13:53:47,511 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 13:53:47,598 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 13:54:03,256 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 13:54:03,257 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 13:54:04,173 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:54:04,667 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:54:05,118 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 13:54:05,120 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 13:54:06,657 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 13:54:06,657 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 13:54:10,459 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 13:54:10,464 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 13:54:10,474 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 13:54:10,484 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 13:54:10,491 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 13:54:10,500 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 13:54:10,507 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 13:54:12,070 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 13:54:12,575 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 13:54:12,581 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 13:54:12,599 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 13:54:14,783 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 13:54:15,848 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 13:54:19,058 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 13:54:19,082 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:54:20,126 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 13:54:20,144 - webiss_automation - INFO - === PREENCHENDO FORMULÁRIO TOMADOR ===
+2025-07-04 13:54:20,145 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '56549156149', 'nome_cliente': 'LUCIANA OLIVEIRA XAVIER', 'endereco': 'SUL ALAMEDA 09 LOTE 3 - PLANO DIRETOR SUL, PALMAS / TO - 77016640', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701171 - ANANDA OLIVEIRA SOARES - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77016-640'}
+2025-07-04 13:54:20,347 - webiss_automation - INFO - ✅ Campo cpf_cnpj preenchido: 56549156149 (usando: //input[@placeholder='Número do documento do tomador'])
+2025-07-04 13:54:20,619 - webiss_automation - INFO - ✅ Campo nome_cliente preenchido: LUCIANA OLIVEIRA XAVIER (usando: //input[@placeholder='Razão social do tomador'])
+2025-07-04 13:54:20,653 - webiss_automation - WARNING - ❌ Campo cep não encontrado em nenhum XPath
+2025-07-04 13:54:20,654 - webiss_automation - INFO - ℹ️ Pulando aguardo do município para otimização
+2025-07-04 13:54:20,654 - webiss_automation - INFO - ✅ Formulário do tomador preenchido com sucesso!
+2025-07-04 13:54:20,657 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:54:21,157 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:54:21,177 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:54:22,178 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:54:22,192 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:54:22,415 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:54:23,424 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:54:23,431 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:54:23,432 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:54:23,432 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:54:23,432 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:54:24,435 - webiss_automation - INFO - === PREENCHENDO STEP 3 - SERVIÇOS (SEM SCROLL) ===
+2025-07-04 13:54:24,435 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '56549156149', 'nome_cliente': 'LUCIANA OLIVEIRA XAVIER', 'endereco': 'SUL ALAMEDA 09 LOTE 3 - PLANO DIRETOR SUL, PALMAS / TO - 77016640', 'valor': 1155.81, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701171 - ANANDA OLIVEIRA SOARES - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77016-640'}
+2025-07-04 13:54:24,440 - webiss_automation - INFO - ✅ Ano preenchido via JavaScript: 2025
+2025-07-04 13:54:24,448 - webiss_automation - INFO - ✅ Mês selecionado via JavaScript: 7
+2025-07-04 13:54:24,649 - webiss_automation - INFO - ✅ Tipo de atividade selecionado via JavaScript
+2025-07-04 13:54:24,657 - webiss_automation - INFO - ✅ CNAE selecionado via JavaScript (índice 2)
+2025-07-04 13:54:24,660 - webiss_automation - INFO - ✅ Valor do serviço preenchido via JavaScript: 1155.81
+2025-07-04 13:54:25,665 - webiss_automation - INFO - ✅ Descrição preenchida via JavaScript
+2025-07-04 13:54:25,666 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:54:25,666 - webiss_automation - INFO - Screenshot final da Step 3 (sem scroll) salvo: step3_sem_scroll.png
+2025-07-04 13:54:25,666 - webiss_automation - INFO - ✅ [SERVIÇOS] Etapa de serviços preenchida com sucesso (sem scroll)!
+2025-07-04 13:54:26,668 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 13:54:27,169 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 13:54:27,184 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:54:28,184 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 13:54:28,201 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 13:54:28,422 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 13:54:29,431 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 13:54:29,437 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 13:54:29,437 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 13:54:29,437 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined
+2025-07-04 13:54:29,437 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 13:54:30,956 - webiss_automation - INFO - Aba 'Valores' ativada via JS.
+2025-07-04 13:54:30,968 - webiss_automation - INFO - Campo de valor do serviço presente no DOM.
+2025-07-04 13:54:30,991 - webiss_automation - INFO - Tentando preencher valor do serviço via JS: 1155.81
+2025-07-04 13:54:31,501 - webiss_automation - INFO - Valor no campo após envio: 1155.81
+2025-07-04 13:54:31,501 - webiss_automation - INFO - Automação parada após preencher valor do serviço no Step 4.
+2025-07-04 13:55:02,116 - webiss_automation - ERROR - Botão Salvar rascunho não encontrado em nenhum seletor
+2025-07-04 13:55:02,117 - webiss_automation - ERROR - Erro ao salvar screenshot: name 'os' is not defined

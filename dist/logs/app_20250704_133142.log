@@ -1,0 +1,56 @@
+2025-07-04 13:31:43,326 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 13:31:43,416 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 13:32:04,480 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 13:32:04,481 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 13:32:05,237 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:32:05,705 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:32:06,224 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 13:32:06,226 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 13:32:07,662 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 13:32:07,662 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 13:32:11,753 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 13:32:11,758 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 13:32:11,769 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 13:32:11,776 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 13:32:11,788 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 13:32:11,797 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 13:32:11,804 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 13:32:13,639 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 13:32:14,144 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 13:32:14,148 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 13:32:14,164 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 13:32:16,346 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 13:32:17,426 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 13:32:21,170 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 13:32:21,191 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:32:22,238 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 13:32:22,254 - webiss_automation - INFO - 🔄 Navegando para próxima nota...
+2025-07-04 13:32:26,233 - webiss_automation - INFO - ✅ Navegação para próxima nota via menu Criar
+2025-07-04 13:32:57,574 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 13:32:57,575 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 13:32:58,303 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:32:58,789 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 13:32:59,252 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 13:32:59,254 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 13:33:00,614 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 13:33:00,614 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 13:33:04,390 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 13:33:04,395 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 13:33:04,406 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 13:33:04,417 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 13:33:04,424 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 13:33:04,432 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 13:33:04,440 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 13:33:05,860 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 13:33:06,365 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 13:33:06,368 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 13:33:06,389 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 13:33:07,719 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 13:33:08,778 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 13:33:12,025 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 13:33:12,048 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 13:33:13,095 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 13:33:13,106 - webiss_automation - INFO - 🔄 Navegando para próxima nota...
+2025-07-04 13:33:17,659 - webiss_automation - INFO - ✅ Navegação para próxima nota via menu Criar
+2025-07-04 13:36:21,908 - webiss_automation - INFO - Driver do navegador fechado
+2025-07-04 13:36:21,914 - __main__ - INFO - Aplicação finalizada

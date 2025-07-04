@@ -8,6 +8,7 @@ import sys
 import os
 import logging
 import pandas as pd
+import time
 from datetime import datetime
 
 # Adicionar o diretório atual ao path
@@ -17,11 +18,28 @@ from config.settings import Settings
 from webiss_automation import WebISSAutomation
 
 # Configurar logging
+def get_log_path():
+    """Retorna o caminho para o arquivo de log"""
+    import sys
+    if getattr(sys, 'frozen', False):
+        # Se é um executável PyInstaller
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # Se é executado como script Python
+        base_path = os.getcwd()
+    
+    # Criar pasta logs se não existir
+    logs_dir = os.path.join(base_path, 'logs')
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+    
+    return os.path.join(logs_dir, 'automacao_webiss.log')
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/automacao_webiss.log', encoding='utf-8'),
+        logging.FileHandler(get_log_path(), encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -31,14 +49,25 @@ logger = logging.getLogger(__name__)
 def carregar_dados_reais():
     """Carrega os dados reais extraídos do PDF"""
     try:
+        # Determinar o caminho do arquivo CSV baseado no diretório do executável
+        import sys
+        if getattr(sys, 'frozen', False):
+            # Se é um executável PyInstaller
+            base_path = os.path.dirname(sys.executable)
+        else:
+            # Se é executado como script Python
+            base_path = os.getcwd()
+        
+        csv_path = os.path.join(base_path, 'boletos_extraidos.csv')
+        
         # Verificar se o arquivo CSV existe
-        if not os.path.exists('boletos_extraidos.csv'):
-            logger.error("❌ Arquivo boletos_extraidos.csv não encontrado!")
+        if not os.path.exists(csv_path):
+            logger.error(f"❌ Arquivo boletos_extraidos.csv não encontrado em: {csv_path}")
             logger.info("Execute primeiro a extração de PDFs pela interface gráfica")
             return None
         
         # Carregar dados do CSV
-        df = pd.read_csv('boletos_extraidos.csv', sep=';', encoding='utf-8')
+        df = pd.read_csv(csv_path, sep=';', encoding='utf-8')
         
         if df.empty:
             logger.error("❌ Nenhum dado encontrado no CSV!")
@@ -66,12 +95,31 @@ def carregar_dados_reais():
             'turma': turma
         }
         
-        # Extrair CEP do endereço se disponível
+        # Extrair CEP do endereço se disponível (múltiplas estratégias)
         if 'endereco' in test_data and test_data['endereco']:
             import re
+            
+            # Estratégia 1: CEP no formato padrão (5 dígitos + hífen + 3 dígitos)
             cep_match = re.search(r'(\d{5})-?(\d{3})', test_data['endereco'])
             if cep_match:
                 test_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
+            else:
+                # Estratégia 2: CEP sem hífen (8 dígitos consecutivos)
+                cep_match = re.search(r'(\d{8})', test_data['endereco'])
+                if cep_match:
+                    cep = cep_match.group(1)
+                    test_data['cep'] = f"{cep[:5]}-{cep[5:]}"
+                else:
+                    # Estratégia 3: Buscar CEP em qualquer lugar do texto
+                    cep_match = re.search(r'(\d{5})[.\-\s]*(\d{3})', test_data['endereco'])
+                    if cep_match:
+                        test_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
+                    else:
+                        # Tentar extrair do texto completo se disponível
+                        if 'descricao' in test_data and test_data['descricao']:
+                            cep_match = re.search(r'(\d{5})-?(\d{3})', test_data['descricao'])
+                            if cep_match:
+                                test_data['cep'] = f"{cep_match.group(1)}-{cep_match.group(2)}"
         
         logger.info(f"✅ Dados carregados do PDF: {dados.get('arquivo_pdf', 'N/A')}")
         logger.info(f"Cliente: {test_data['nome_cliente']}")
@@ -129,7 +177,6 @@ def main():
             return False
         
         # Aguardar carregamento do Step 3
-        import time
         time.sleep(1)
         
         # Preencher Step 3 usando a função sem scroll
@@ -160,7 +207,14 @@ def main():
         time.sleep(2)
         
         logger.info("✅ Automação concluída com sucesso!")
-        logger.info("Verifique os screenshots em logs/ para ver se não houve scroll")
+        # Determinar o caminho dos logs
+        import sys
+        if getattr(sys, 'frozen', False):
+            logs_path = os.path.join(os.path.dirname(sys.executable), 'logs')
+        else:
+            logs_path = os.path.join(os.getcwd(), 'logs')
+        
+        logger.info(f"Verifique os screenshots em {logs_path} para ver se não houve scroll")
         logger.info("🚀 Navegador mantido aberto para inspeção")
         
         # Manter o navegador aberto para inspeção

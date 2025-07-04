@@ -1,0 +1,75 @@
+2025-07-04 15:39:14,596 - utils.license_checker - INFO - Licença válida para ColegioObjetivo - 58 dias restantes
+2025-07-04 15:39:14,675 - config.settings - INFO - Configurações carregadas de: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\.env
+2025-07-04 15:39:39,635 - webiss_automation - INFO - Configurando driver com URL: https://palmasto.webiss.com.br
+2025-07-04 15:39:39,636 - WDM - INFO - ====== WebDriver manager ======
+2025-07-04 15:39:40,507 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 15:39:41,123 - WDM - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-04 15:39:41,650 - WDM - INFO - Driver [C:\Users\yudim\.wdm\drivers\chromedriver\win64\137.0.7151.119\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2025-07-04 15:39:41,652 - webiss_automation - WARNING - Erro com ChromeDriverManager: [WinError 193] %1 não é um aplicativo Win32 válido
+2025-07-04 15:39:43,173 - webiss_automation - INFO - Driver do Chrome configurado com sucesso
+2025-07-04 15:39:43,173 - webiss_automation - INFO - Navegando para: https://palmasto.webiss.com.br
+2025-07-04 15:39:47,092 - webiss_automation - INFO - URL atual: https://palmasto.webiss.com.br/
+2025-07-04 15:39:47,098 - webiss_automation - INFO - Título da página: Autenticação | WebISS®
+2025-07-04 15:39:47,108 - webiss_automation - INFO - Campo de usuário encontrado: xpath=//input[@type='text']
+2025-07-04 15:39:47,118 - webiss_automation - INFO - Usuário preenchido via JavaScript
+2025-07-04 15:39:47,125 - webiss_automation - INFO - Campo de senha encontrado: xpath=//input[@type='password']
+2025-07-04 15:39:47,133 - webiss_automation - INFO - Senha preenchida via JavaScript
+2025-07-04 15:39:47,140 - webiss_automation - INFO - Botão de login encontrado: xpath=//button[@type='submit']
+2025-07-04 15:39:48,087 - webiss_automation - INFO - Botão de login clicado via JavaScript
+2025-07-04 15:39:48,592 - webiss_automation - INFO - URL após login: https://palmasto.webiss.com.br/inicio
+2025-07-04 15:39:48,597 - webiss_automation - INFO - Título após login: Início | WebISS®
+2025-07-04 15:39:48,615 - webiss_automation - INFO - Login realizado com sucesso
+2025-07-04 15:39:58,396 - webiss_automation - INFO - Menu ISSQN clicado
+2025-07-04 15:39:59,450 - webiss_automation - INFO - Menu NFS-e clicado
+2025-07-04 15:40:02,471 - webiss_automation - INFO - Menu Criar clicado - pronto para preencher a nota
+2025-07-04 15:40:02,549 - webiss_automation - INFO - Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 15:40:03,599 - webiss_automation - INFO - Botão Próximo clicado - avançando para Tomador
+2025-07-04 15:40:03,623 - webiss_automation - INFO - === PREENCHENDO FORMULÁRIO TOMADOR ===
+2025-07-04 15:40:03,623 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '71075224187', 'nome_cliente': 'THIAGO CARMO OLIVEIRA', 'endereco': '402 SUL, RUA NS B, CONJUNTO 02 LT 07/08, , PALMAS/ - 77021624', 'valor': 1049.1, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701490 - ANNA LUIZA KZAN CARMO OLIVEIRA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77021-624'}
+2025-07-04 15:40:03,808 - webiss_automation - INFO - ✅ Campo cpf_cnpj preenchido: 71075224187 (usando: //input[@placeholder='Número do documento do tomador'])
+2025-07-04 15:40:04,036 - webiss_automation - INFO - ✅ Campo nome_cliente preenchido: THIAGO CARMO OLIVEIRA (usando: //input[@placeholder='Razão social do tomador'])
+2025-07-04 15:40:04,036 - webiss_automation - INFO - CEP recebido nos dados: '77021-624'
+2025-07-04 15:40:04,036 - webiss_automation - INFO - ✅ CEP já disponível nos dados: 77021-624
+2025-07-04 15:40:04,036 - webiss_automation - INFO - 🔍 Verificando campo Inscrição Municipal...
+2025-07-04 15:40:04,059 - webiss_automation - INFO - 🔄 Campo Inscrição Municipal é um select normal - tentando selecionar opção correta...
+2025-07-04 15:40:04,059 - webiss_automation - INFO - 🎯 Tentando encontrar inscrição municipal para CEP: 77021-624
+2025-07-04 15:40:06,074 - webiss_automation - WARNING - ⚠️ Select está desabilitado, tentando habilitar...
+2025-07-04 15:40:07,087 - webiss_automation - INFO - 📋 Encontradas 1 opções de inscrição municipal
+2025-07-04 15:40:07,101 - webiss_automation - INFO -   Opção 0: valor='-1', texto=''
+2025-07-04 15:40:07,101 - webiss_automation - WARNING - ⚠️ Nenhuma opção válida encontrada no select
+2025-07-04 15:40:07,102 - webiss_automation - INFO - 🔄 Aguardando carregamento das opções...
+2025-07-04 15:40:10,107 - webiss_automation - INFO - 📋 Após aguardar: 1 opções encontradas
+2025-07-04 15:40:10,107 - webiss_automation - WARNING - ⚠️ Ainda não há opções válidas, tentando forçar carregamento...
+2025-07-04 15:40:12,123 - webiss_automation - INFO - 📋 Após clicar: 1 opções encontradas
+2025-07-04 15:40:12,124 - webiss_automation - ERROR - ❌ Não foi possível carregar opções do select
+2025-07-04 15:40:12,124 - webiss_automation - WARNING - ⚠️ Não foi possível encontrar inscrição municipal pelo CEP
+2025-07-04 15:40:12,124 - webiss_automation - INFO - ℹ️ Pulando aguardo do município para otimização
+2025-07-04 15:40:12,124 - webiss_automation - INFO - ✅ Formulário do tomador preenchido com sucesso!
+2025-07-04 15:40:12,127 - webiss_automation - INFO - === TENTANDO CLICAR EM PRÓXIMO ===
+2025-07-04 15:40:12,629 - webiss_automation - INFO - Tentando XPath: //a[@id='btnProximo']
+2025-07-04 15:40:12,650 - webiss_automation - INFO - ✅ Botão Próximo encontrado: //a[@id='btnProximo']
+2025-07-04 15:40:13,650 - webiss_automation - INFO - Aguardando botão Próximo (sem scroll)
+2025-07-04 15:40:13,666 - webiss_automation - INFO - Clicando no botão Próximo via JavaScript...
+2025-07-04 15:40:13,916 - webiss_automation - INFO - ✅ Botão Próximo clicado via JavaScript!
+2025-07-04 15:40:14,930 - webiss_automation - INFO - ℹ️ Nenhum modal de confirmação detectado
+2025-07-04 15:40:14,936 - webiss_automation - INFO - URL após clique: https://palmasto.webiss.com.br/issqn/nfse/criar
+2025-07-04 15:40:14,937 - webiss_automation - INFO - Título após clique: Criar nota fiscal eletrônica - CENTRO EDUCACIONAL JCC LTDA (33.633.805/0001-21) [IMU: 2414139] | WebISS®
+2025-07-04 15:40:15,036 - webiss_automation - INFO - Screenshot salvo: C:\Users\yudim\OneDrive\Documentos\projetos-hatcorp\emite-nota\dist\logs\apos_proximo_click.png
+2025-07-04 15:40:15,036 - webiss_automation - INFO - Screenshot após clique salvo: apos_proximo_click.png
+2025-07-04 15:40:16,051 - webiss_automation - INFO - === PREENCHENDO STEP 3 - SERVIÇOS (SEM SCROLL) ===
+2025-07-04 15:40:16,051 - webiss_automation - INFO - Dados recebidos: {'cpf_cnpj': '71075224187', 'nome_cliente': 'THIAGO CARMO OLIVEIRA', 'endereco': '402 SUL, RUA NS B, CONJUNTO 02 LT 07/08, , PALMAS/ - 77021624', 'valor': 1049.1, 'vencimento': '10/07/2025', 'descricao': 'MENSALIDADE: 701490 - ANNA LUIZA KZAN CARMO OLIVEIRA - TURMA: G1MA', 'turma': 'G1MA', 'cep': '77021-624'}
+2025-07-04 15:40:16,071 - webiss_automation - INFO - ✅ Ano preenchido via JavaScript: 2025
+2025-07-04 15:40:16,085 - webiss_automation - INFO - ✅ Mês selecionado via JavaScript: 7
+2025-07-04 15:40:16,456 - webiss_automation - INFO - ✅ Tipo de atividade selecionado via JavaScript
+2025-07-04 15:40:16,465 - webiss_automation - INFO - ✅ CNAE selecionado via JavaScript (índice 2)
+2025-07-04 15:40:16,469 - webiss_automation - INFO - ✅ Valor do serviço preenchido via JavaScript: 1049.1
+2025-07-04 15:40:21,455 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000270598C9550>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76
+2025-07-04 15:40:21,514 - urllib3.connectionpool - WARNING - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000027052418690>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76/execute/sync
+2025-07-04 15:40:25,524 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000027059797250>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76
+2025-07-04 15:40:25,587 - urllib3.connectionpool - WARNING - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000002705982A060>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76/execute/sync
+2025-07-04 15:40:29,581 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000027059829E00>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76
+2025-07-04 15:40:29,653 - urllib3.connectionpool - WARNING - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000027059827BF0>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente')': /session/f55028cbc9e12994401d5db4a6b14b76/execute/sync
+2025-07-04 15:40:33,704 - urllib3.connectionpool - WARNING - Connection pool is full, discarding connection: localhost. Connection pool size: 1
+2025-07-04 15:40:33,704 - webiss_automation - WARNING - ⚠️ Erro ao preencher descrição: HTTPConnectionPool(host='localhost', port=64673): Max retries exceeded with url: /session/f55028cbc9e12994401d5db4a6b14b76/execute/sync (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000027059872E00>: Failed to establish a new connection: [WinError 10061] Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente'))
+2025-07-04 15:40:37,733 - webiss_automation - INFO - Driver do navegador fechado
+2025-07-04 15:40:37,736 - __main__ - INFO - Aplicação finalizada
